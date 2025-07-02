@@ -1,0 +1,35 @@
+子域名接管的本质是DNS配置与云服务资源生命周期之间的“脱节”。DNS记录依然存在，但其指向的云服务资源（如一个S3存储桶或一个GitHub Pages站点）已被删除或重命名。攻击者可以利用这个机会，在第三方云服务上重新创建同名资源，从而“接管”该子域名。
+
+拓展分析线索：
+DNS记录分析 (深挖 CNAME):
+
+核心线索: 寻找指向可被公众注册资源的第三方云服务的CNAME记录。这不仅限于 *.github.io 或 s3.amazonaws.com，还包括 Heroku (*.herokuapp.com), Netlify (*.netlify.app), Azure (*.cloudapp.azure.com, *.blob.core.windows.net), HubSpot (*.hs-sites.com), Shopify (shops.myshopify.com) 等数十种服务。
+
+工具验证: 使用 nslookup 命令查询目标子域名。如果返回了一个CNAME记录，就需要对该记录指向的域名进行重点审查。
+
+$ dig vulnerable.example.com
+
+# 结果可能显示
+vulnerable.example.com.  3600  IN  CNAME  unclaimed-bucket.s3.amazonaws.com.
+关联分析: 不仅仅是A记录的子域名，检查所有子域名，包括那些用于邮件、文件分发或API的域名 (api.*, files.*, cdn.*)。
+
+内容与响应码分析 (不仅仅是 404):
+
+指纹识别: 每个云服务商都有其独特的“资源不存在”的错误信息，这是最强有力的证据。除了原文提到的，还有：
+
+Heroku: "No such app"
+
+Netlify: "Not Found"
+
+Shopify: "Sorry, this shop is currently unavailable."
+
+Azure Blob Storage: "The specified blob does not exist."
+
+响应码: 404 Not Found 是最常见的，但 403 Forbidden 有时也可能出现，这取决于服务商的策略。
+
+内容无关性: 页面显示的内容与主站品牌、业务、风格完全无关。例如，一个金融公司的子域名突然显示一个个人博客模板或一个游戏页面，这极不寻常。
+
+可验证性 (主动探测):
+
+模拟接管: 分析的核心在于确认攻击者可以注册。对于有经验的分析师，可以尝试去对应的云服务商（如AWS, GitHub）的管理后台，尝试创建一个与CNAME记录中指向的名称完全相同的资源（例如，创建一个名为 unclaimed-bucket 的S3存储桶）。如果可以成功创建，就100%确认了该漏洞的存在。
+
