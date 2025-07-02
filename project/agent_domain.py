@@ -8,7 +8,8 @@ from langchain_community.chat_models import ChatZhipuAI # type: ignore
 from langchain_ollama import OllamaLLM # type: ignore
 from langchain.chains import RetrievalQA # type: ignore
 from langchain_community.vectorstores import Chroma # type: ignore
-from langchain_community.embeddings import HuggingFaceEmbeddings # type: ignore
+# from langchain_community.embeddings import HuggingFaceEmbeddings # type: ignore
+from langchain_huggingface import HuggingFaceEmbeddings # type: ignore
 from langchain_community.embeddings import OllamaEmbeddings # type: ignore
 from langchain.text_splitter import RecursiveCharacterTextSplitter # type: ignore
 from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader, TextLoader # type: ignore
