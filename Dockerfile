@@ -4,6 +4,8 @@ WORKDIR /app
 
 RUN python -m pip install --upgrade pip
 
+ENV PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION="python"
+
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt

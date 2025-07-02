@@ -414,9 +414,9 @@ def setup_rag_retriever(llm):
     # Create embeddings
     print("   - 正在初始化嵌入模型 (这可能需要一些时间)...")
     # 使用HuggingFaceEmbeddings开源嵌入模型
-    # embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
+    embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
     # 使用本地部署的nomic-embed-text开源嵌入模型（具有较大的标记上下文窗口）
-    embeddings = OllamaEmbeddings(model="nomic-embed-text")
+    # embeddings = OllamaEmbeddings(model="nomic-embed-text")
 
     # Create and persist a Chroma vector store
     print("   - 正在创建并持久化向量数据库...")
