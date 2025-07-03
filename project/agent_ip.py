@@ -243,54 +243,51 @@ def append_to_cache_csv(ip, status):
 
 # 初始化知识库
 def setup_rag_retriever(llm):
-    try:
-        if not os.path.exists(KNOWLEDGE_BASE_DIR):
-            print(f"   - [警告] 知识库目录 '{KNOWLEDGE_BASE_DIR}' 未找到。RAG工具将不可用。")
-            return None
-        loaded_documents = []
-        print(f"   - 开始从 '{KNOWLEDGE_BASE_DIR}' 手动加载文件...")
-        for root, _, files in os.walk(KNOWLEDGE_BASE_DIR):
-            for file in files:
-                file_path = os.path.join(root, file)
-                print(f"     - 正在处理文件: {file_path}")
-                try:
-                    if file.endswith(".pdf"):
-                        loader = PyPDFLoader(file_path)
-                        loaded_documents.extend(loader.load())
-                    elif file.endswith(".md") or file.endswith(".txt"):
-                        loader = TextLoader(file_path, encoding='utf-8')
-                        loaded_documents.extend(loader.load())
-                except Exception as e:
-                    print(f"     - [错误] 加载文件 {file_path} 失败: {e}")
-        if not loaded_documents:
-            print(f"   - [警告] 知识库目录 '{KNOWLEDGE_BASE_DIR}' 中没有找到可加载的文档。RAG工具将不可用。")
-            return None
-        print(f"   - 成功从 '{KNOWLEDGE_BASE_DIR}' 加载 {len(loaded_documents)} 个文档。")
-        # Split
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-        texts = text_splitter.split_documents(loaded_documents)
+    if not os.path.exists(KNOWLEDGE_BASE_DIR):
+        print(f"   - [警告] 知识库目录 '{KNOWLEDGE_BASE_DIR}' 未找到。RAG工具将不可用。")
+        return None
+    loaded_documents = []
+    print(f"   - 开始从 '{KNOWLEDGE_BASE_DIR}' 手动加载文件...")
+    for root, _, files in os.walk(KNOWLEDGE_BASE_DIR):
+        for file in files:
+            file_path = os.path.join(root, file)
+            print(f"     - 正在处理文件: {file_path}")
+            try:
+                if file.endswith(".pdf"):
+                    loader = PyPDFLoader(file_path)
+                    loaded_documents.extend(loader.load())
+                elif file.endswith(".md") or file.endswith(".txt"):
+                    loader = TextLoader(file_path, encoding='utf-8')
+                    loaded_documents.extend(loader.load())
+            except Exception as e:
+                print(f"     - [错误] 加载文件 {file_path} 失败: {e}")
+    if not loaded_documents:
+        print(f"   - [警告] 知识库目录 '{KNOWLEDGE_BASE_DIR}' 中没有找到可加载的文档。RAG工具将不可用。")
+        return None
+    print(f"   - 成功从 '{KNOWLEDGE_BASE_DIR}' 加载 {len(loaded_documents)} 个文档。")
+    # Split
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    texts = text_splitter.split_documents(loaded_documents)
 
-        # Create embeddings
-        print("   - 正在初始化嵌入模型 (这可能需要一些时间)...")
-        # 使用HuggingFaceEmbeddings开源嵌入模型
-        embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
-        # 使用本地部署的nomic-embed-text开源嵌入模型（具有较大的标记上下文窗口）
-        # embeddings = OllamaEmbeddings(model="nomic-embed-text")
+    # Create embeddings
+    print("   - 正在初始化嵌入模型 (这可能需要一些时间)...")
+    # 使用HuggingFaceEmbeddings开源嵌入模型
+    embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
+    # 使用本地部署的nomic-embed-text开源嵌入模型（具有较大的标记上下文窗口）
+    # embeddings = OllamaEmbeddings(model="nomic-embed-text")
 
-        print("   - 正在创建并持久化向量数据库...")
-        db = Chroma.from_documents(texts, embeddings, persist_directory=PERSIST_DIRECTORY)
-        db.persist()
-        retriever = db.as_retriever(search_kwargs={"k": 2})  # Retrieve top 2 relevant chunks
-        qa_chain = RetrievalQA.from_chain_type(
-            llm=llm,
-            chain_type="stuff",
-            retriever=retriever,
-            return_source_documents=True
-        )
-        print("   - RAG检索器设置成功。")
-        return qa_chain
-    except Exception as e:
-        return f"初始化知识库时发生未知错误: {e}"
+    print("   - 正在创建并持久化向量数据库...")
+    db = Chroma.from_documents(texts, embeddings, persist_directory=PERSIST_DIRECTORY)
+    db.persist()
+    retriever = db.as_retriever(search_kwargs={"k": 2})  # Retrieve top 2 relevant chunks
+    qa_chain = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff",
+        retriever=retriever,
+        return_source_documents=True
+    )
+    print("   - RAG检索器设置成功。")
+    return qa_chain
 
     # 读取待分析的IP
     def read_ips_to_analyze(file_path):
@@ -398,7 +395,8 @@ def run_agent_with_retry(agent, prompt):
 
 def start_with_ip(ip):
     model = initialize_llm()
-    rag_qa_chain = setup_rag_retriever(model)
+    
+    # rag_qa_chain = setup_rag_retriever(model)
 
     # --- 【核心修改】创建新的IP分析工具列表 ---
     tools = [
@@ -434,17 +432,17 @@ def start_with_ip(ip):
         )
     ]
 
-    if rag_qa_chain:
-        def run_rag_chain(query: str):
-            result = rag_qa_chain({"query": query})
-            source_docs = "\n".join([f"Source: {doc.metadata.get('source', 'Unknown')}" for doc in result['source_documents']])
-            return f"Retrieved Information:\n{result['result']}\n\nSources:\n{source_docs}"
-        rag_tool = Tool(
-            name="Knowledge Base Retriever",
-            func=run_rag_chain,
-            description="从内部知识库中检索与查询相关的信息。当你需要关于特定威胁、攻击活动（如C2服务器IP）、或分析技术的背景知识时使用它。"
-        )
-        tools.insert(0, rag_tool)
+    # if rag_qa_chain:
+    #     def run_rag_chain(query: str):
+    #         result = rag_qa_chain({"query": query})
+    #         source_docs = "\n".join([f"Source: {doc.metadata.get('source', 'Unknown')}" for doc in result['source_documents']])
+    #         return f"Retrieved Information:\n{result['result']}\n\nSources:\n{source_docs}"
+    #     rag_tool = Tool(
+    #         name="Knowledge Base Retriever",
+    #         func=run_rag_chain,
+    #         description="从内部知识库中检索与查询相关的信息。当你需要关于特定威胁、攻击活动（如C2服务器IP）、或分析技术的背景知识时使用它。"
+    #     )
+    #     tools.insert(0, rag_tool)
 
     agent = initialize_agent(
         tools,

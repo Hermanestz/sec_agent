@@ -81,3 +81,17 @@ SSL证书状态: 443端口连接超时。
 类型：恶意软件活动中继/代理
 核心理由: 该IP与动态DNS服务和Cloudflare Workers相关联，这些服务可能被恶意软件滥用，且OTX威胁情报显示存在潜在威胁。虽然VirusTotal评估为低风险，但综合其他信息，判定为可疑IP。
 ==================================================
+
+==================================================
+199.16.158.8
+---------- 检测数据概括 ----------
+IP Whois信息: 国家: United States, 组织: Twitter Inc, ASN: AS13414 Twitter Inc.
+反向DNS查询: 关联的历史域名包括webproxy.idc.vendor.tencent.com, xs341533.top, 0-enakamai-lanwpradionetoppooaentrydstaging.redirectme.netoppofentryd.test.krpauditsstagingabeaticendabeaticendvradio.ali.zomans.com, m.61121p.com, bounceme.net等。
+SSL证书状态: 未开放443端口
+网站内容摘要: 未托管网站
+威胁情报摘要： OTX检测到多个威胁情报，包括IOC Records和HIVE活动。VirusTotal评估为低风险，0个安全厂商标记为恶意或可疑。
+---------- IP定性结果 ----------
+等级：中风险（可疑IP）
+类型：潜在恶意域名关联
+核心理由: 尽管VirusTotal评级为低风险，但反向DNS查询结果中存在多个可疑域名，且OTX检测到威胁情报，表明该IP可能与某些恶意活动存在关联，但证据不足以确认为恶意IP。
+==================================================
