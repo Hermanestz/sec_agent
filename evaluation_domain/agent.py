@@ -1,6 +1,6 @@
 import sys
 from langchain.agents import Tool # type: ignore
-from langchain_google_genai import ChatGoogleGenerativeAI # type: ignore
+# from langchain_google_genai import ChatGoogleGenerativeAI # type: ignore
 from langchain.agents import initialize_agent, AgentType # type: ignore
 from langchain.chat_models import init_chat_model # type: ignore
 from langchain_community.llms import Tongyi # type: ignore
@@ -43,10 +43,10 @@ import IndicatorTypes # type: ignore
 # ---------- 文件路径定义 ----------
 
 # 定义域名输入文件
-CACHE_FILE = 'data/cache_domain.csv'
-CSV_HEADER = ['domain', 'status', 'label', 'location', 'detail', 'timestamp']  # 定义CSV文件的表头
-LOG_FILE = 'log_domain.txt'
-INPUT_FILE = 'domain_list.csv'
+CACHE_FILE = 'cache.csv'
+CSV_HEADER = ['domain', 'status', 'label', 'detail', 'timestamp']  # 定义CSV文件的表头
+LOG_FILE = 'log.txt'
+INPUT_FILE = 'malicious_list_domains.csv'
 
 # 全局变量存储OTX alerts
 # PROMPT_FILE = 'prompt_domain.txt'
@@ -390,14 +390,13 @@ def load_cache_from_csv():
                 return {} # Return empty dict for empty file
             for row in reader:
                 # Ensure the row has enough columns to prevent IndexError
-                if row and len(row) >= 5:
+                if row and len(row) >= 4:
                     domain = row[0]
                     # Store the relevant parts of the report in a dictionary
                     domain_cache[domain] = {
                         "status": row[1],
                         "label": row[2] if row[2] else None, # Handle empty string for label
-                        "location": row[3] if row[3] else None,
-                        "detail": row[4]
+                        "detail": row[3]
                     }
         print(f"成功从 '{CACHE_FILE}' 加载 {len(domain_cache)} 条缓存记录。")
     except FileNotFoundError:
@@ -407,7 +406,7 @@ def load_cache_from_csv():
     return domain_cache
 
 # 写入缓存操作
-def append_to_cache_csv(domain, status, label, location, detail):
+def append_to_cache_csv(domain, status, label, detail):
     file_exists = os.path.isfile(CACHE_FILE)
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     try:
@@ -415,7 +414,7 @@ def append_to_cache_csv(domain, status, label, location, detail):
             writer = csv.writer(f)
             if not file_exists or os.path.getsize(CACHE_FILE) == 0:
                 writer.writerow(CSV_HEADER) # 如果是新文件或空文件，先写入表头
-            writer.writerow([domain, status, label, location, detail, timestamp])
+            writer.writerow([domain, status,  label, detail, timestamp])
     except IOError as e:
         print(f"写入缓存文件 '{CACHE_FILE}' 时发生错误: {e}")
 
@@ -462,9 +461,8 @@ def initialize_llm():
     # model = Tongyi(temperature=0.1, model_name = 'qwen-turbo-latest')
     # return model
 
-    # 使用通义千问qwen3:8b（本地部署）大模型
+    # 使用通义千问qwen3:14b（本地部署）大模型
     model = OllamaLLM(model="qwen3:14b", temperature=0.1, base_url="http://192.168.3.98:11434")
-    # model = OllamaLLM(model="qwen2.5:14b", temperature=0.1, base_url="http://host.docker.internal:11434")
     print("   - 初始化本地LLM (qwen3:14b)...")
     return model
 
@@ -472,16 +470,13 @@ def initialize_llm():
 
 class DomainReport(BaseModel):
     """最终的域名安全分析报告的结构化输出。"""
-    status: Literal["Safe", "Suspicious", "Malicious"] = Field(description="对域名的最终裁决")
+    status: Literal["benign", "malicious"] = Field(description="对域名的最终裁决，'benign'代表安全域名,'malicious'代表恶意域名")
     label: Optional[str] = Field(None, description="如果域名是可疑或恶意的，用中文列出一个或多个特定的恶意行为类型，如'钓鱼网站', '垃圾邮件', '远程访问木马', 'C2服务器'，'勒索软件'，'僵尸网络'等，当威胁情报有明确的恶意类型时，需要全部列出。安全域名则为'-'。")
-    location: Optional[str] = Field(None, description="用中文列出域名所在的国家或地区")
     detail: str = Field(description="用中文一句话简要总结做出判断的核心原因")
 
 class DomainAnalysisState(TypedDict):
     """图的状态，在节点之间传递信息"""
     domain: str
-    otx_report: Optional[str]
-    virustotal_report: Optional[str]
     dga_result: Optional[str]
     whois_info: Optional[str]
     dns_ips: Optional[str]
@@ -489,51 +484,117 @@ class DomainAnalysisState(TypedDict):
     dns_auth: Optional[str]
     ssl_info: Optional[str]
     website_content: Optional[str]
+    parse_info_analysis: Optional[str]  # 新增：解析信息分析结果
+    website_analysis: Optional[str]     # 新增：网站内容分析结果
     final_report: Optional[DomainReport] # The final, structured report
 
 # 节点定义
 
-def initial_threat_intel_node(state: DomainAnalysisState) -> dict:
-    """节点1：获取初始威胁情报"""
-    domain = state["domain"]
-    print(f"--- [Node] 获取 {domain} 的初始威胁情报 ---")
-    otx_report = get_otx_domain_analyses(domain)
-    virustotal_report = get_vt_domain_report(domain)
-    whois_info = get_whois_info(domain)
-    print(otx_report)
-    print(virustotal_report)
-    return {
-        "whois_info": whois_info,
-        "otx_report": otx_report,
-        "virustotal_report": virustotal_report
-    }
-
 def dga_check_node(state: DomainAnalysisState) -> dict:
-    """节点2：进行DGA检测"""
+    """节点2.1：进行DGA检测"""
     domain = state["domain"]
     print(f"--- [Node] 对 {domain} 进行DGA检测 ---")
     dga_result = check_dga_with_ml(domain)
     return {"dga_result": dga_result}
 
-def supplementary_info_node(state: DomainAnalysisState) -> dict:
-    """节点3：获取补充信息"""
+def parse_info_node(state: DomainAnalysisState) -> dict:
+    """节点2.2：解析信息分析，并调用LLM"""
     domain = state["domain"]
-    print(f"--- [Node] 为 {domain} 获取补充信息 ---")
-    # For a more robust solution, these could be run in parallel
-    dns_ips = json.dumps(get_dns_ips(domain), indent=2) # Convert dict to string for display
-    passive_dns = json.dumps(get_passive_dns_ips(domain), indent=2)
-    dns_auth = json.dumps(get_dns_auth_records(domain), indent=2)
-    ssl_info = get_ssl_certificate_info(domain)
-    # Add protocol for website content fetching
-    url = f"http://{domain}"
-    website_content = get_website_content(url)
-    return {
-        "dns_ips": dns_ips,
-        "passive_dns": passive_dns,
-        "dns_auth": dns_auth,
-        "ssl_info": ssl_info,
-        "website_content": website_content
-    }
+    print(f"--- [Node] 为 {domain} 分析解析信息 ---")
+    
+    try:
+        whois_info = get_whois_info(domain)
+        dns_ips = json.dumps(get_dns_ips(domain), indent=2)
+        passive_dns = json.dumps(get_passive_dns_ips(domain), indent=2)
+        dns_auth = json.dumps(get_dns_auth_records(domain), indent=2)
+        ssl_info = get_ssl_certificate_info(domain)
+        
+        # LLM分析
+        llm = initialize_llm()
+        prompt = f"""
+                你是一名网络安全分析师。请根据以下域名的信息，简要分析该域名的潜在风险或异常点。
+                - Whois信息: {whois_info}
+                - DNS解析: {dns_ips}
+                - 历史DNS: {passive_dns}
+                - 邮件安全: {dns_auth}
+                - SSL证书信息: {ssl_info}
+                请用中文简要总结分析结论。
+                """
+        
+        try:
+            llm_result = llm.invoke(prompt)
+            # 确保返回的是字符串，并清理可能的思考标签
+            if isinstance(llm_result, str):
+                # 移除可能的<think>标签
+                llm_result = re.sub(r'<think>.*?</think>', '', llm_result, flags=re.DOTALL)
+                llm_result = llm_result.strip()
+            else:
+                llm_result = str(llm_result)
+        except Exception as e:
+            print(f"LLM调用失败: {e}")
+            llm_result = "LLM分析失败，无法获取分析结果"
+        
+        return {
+            "whois_info": whois_info,
+            "dns_ips": dns_ips,
+            "passive_dns": passive_dns,
+            "dns_auth": dns_auth,
+            "ssl_info": ssl_info,
+            "parse_info_analysis": llm_result
+        }
+    except Exception as e:
+        print(f"解析信息节点执行失败: {e}")
+        return {
+            "whois_info": "获取失败",
+            "dns_ips": "获取失败",
+            "passive_dns": "获取失败",
+            "dns_auth": "获取失败",
+            "ssl_info": "获取失败",
+            "parse_info_analysis": f"分析失败: {e}"
+        }
+
+def website_analysis_node(state: DomainAnalysisState) -> dict:
+    """节点2.3：网站内容分析，并调用LLM"""
+    domain = state["domain"]
+    print(f"--- [Node] 为 {domain} 分析网站内容 ---")
+    
+    try:
+        url = f"http://{domain}"
+        website_content = get_website_content(url)
+        
+        # LLM分析
+        llm = initialize_llm()
+        prompt = f"""
+                你是一名网络安全分析师。请根据以下域名的网站内容，简要分析该域名的用途和安全层面的风险。
+                网站内容摘要: {website_content}
+                请用中文简要总结分析结论。
+                """
+        
+        try:
+            llm_result = llm.invoke(prompt)
+            # 确保返回的是字符串，并清理可能的思考标签
+            if isinstance(llm_result, str):
+                # 移除可能的<think>标签
+                llm_result = re.sub(r'<think>.*?</think>', '', llm_result, flags=re.DOTALL)
+                llm_result = llm_result.strip()
+            else:
+                llm_result = str(llm_result)
+        except Exception as e:
+            print(f"LLM调用失败: {e}")
+            llm_result = "LLM分析失败，无法获取分析结果"
+        
+        return {
+            "website_content": website_content,
+            "website_analysis": llm_result
+        }
+    except Exception as e:
+        print(f"网站分析节点执行失败: {e}")
+        return {
+            "website_content": "获取失败",
+            "website_analysis": f"分析失败: {e}"
+        }
+
+# 已移除 supplementary_info_node，因为功能已拆分到 parse_info_node 和 website_analysis_node
 
 def final_analysis_node(state: DomainAnalysisState) -> dict:
     """节点4：进行最终的综合分析并生成报告 (使用OutputParser适配本地模型)"""
@@ -545,19 +606,13 @@ def final_analysis_node(state: DomainAnalysisState) -> dict:
 
     # 3. 在Prompt中加入格式化指令
     prompt_context = f"""
-你是一名顶尖的网络安全分析师。你已经收集到了关于域名 '{domain}' 的所有情报信息。
-请基于下面提供的全部上下文，进行深入分析，判断该域名的性质。
+你是一名顶尖的网络安全分析师。你已经收集到了关于域名 '{domain}' 各方面的信息。
+请基于下面提供的全部上下文，进行深入分析，判断该域名是否为恶意域名。
 
 **已收集情报:**
-- OTX情报: {state.get('otx_report', '未收集')}
-- VirusTotal情报: {state.get('virustotal_report', '未收集')}
 - DGA检测: {state.get('dga_result', '未收集')}
-- Whois信息: {state.get('whois_info', '未收集')}
-- DNS解析与IP信息: {state.get('dns_ips', '未收集')}
-- 历史DNS记录: {state.get('passive_dns', '未收集')}
-- 邮件安全记录 (MX, SPF, DMARC): {state.get('dns_auth', '未收集')}
-- SSL证书信息: {state.get('ssl_info', '未收集')}
-- 网站内容摘要: {state.get('website_content', '未收集')}
+- 解析信息分析: {state.get('parse_info_analysis', '未收集')}
+- 网站内容分析: {state.get('website_analysis', '未收集')}
 
 **任务:**
 综合上述所有信息，推断潜在的恶意行为。
@@ -572,6 +627,10 @@ def final_analysis_node(state: DomainAnalysisState) -> dict:
         # 2. 首先，只调用LLM，获取它可能包含多余文本的原始输出
         raw_output = llm.invoke(prompt_context)
         print(f"--- [Debug] LLM原始输出:\n{raw_output}\n---")
+
+        # 保证是字符串
+        if not isinstance(raw_output, str):
+            raw_output = str(raw_output)
 
         # 3. 使用正则表达式从原始输出中提取JSON部分
         # re.DOTALL 使得 '.' 可以匹配包括换行在内的任意字符
@@ -596,19 +655,7 @@ def final_analysis_node(state: DomainAnalysisState) -> dict:
 
     return {"final_report": final_report}
 
-# --- Conditional Edge Function ---
-def should_gather_more_info(state: DomainAnalysisState) -> Literal["gather_supplementary_info", "analyze_directly"]:
-    """条件边：根据初始情报判断是否需要进一步收集信息"""
-    print("--- [Edge] 判断是否需要补充信息 ---")
-    otx = state.get("otx_report", "")
-    vt = state.get("virustotal_report", "")
-
-    if "高风险" in vt or "高风险" in otx: # type: ignore
-        print(" -> 决策：威胁情报充足，直接分析")
-        return "analyze_directly"
-
-    print(" -> 决策：初始情报不足，进一步收集补充信息分析")
-    return "gather_supplementary_info"
+# --- 条件边函数已移除，因为新流程是线性的 ---
 
 # ------------- 主函数 -------------
 
@@ -629,16 +676,13 @@ def process_cached_domain(domain, cached_report_data):
         report = DomainReport(
             status=cached_report_data['status'],
             label=cached_report_data['label'],
-            location=cached_report_data.get('location'),
             detail=cached_report_data['detail']
         )
         print(f"\n   [缓存命中] '{domain}' 的分析结果已从缓存加载。")
         # 格式化并打印与新分析一致的输出
-        result_output = f"性质: {report.status}\n"
+        result_output = f"Final Answer: {report.status}\n"
         if report.label:
             result_output += f"类型：{report.label}\n"
-        if report.location:
-            result_output += f"地理位置：{report.location}\n"
         result_output += f"核心理由: {report.detail}"
         print("\n" + "="*50)
         print("✅ 分析完成，最终报告：")
@@ -663,30 +707,24 @@ def process_uncached_domain(domain):
     graph = StateGraph(DomainAnalysisState)
 
     # Add nodes
-    graph.add_node("initial_threat_intel", initial_threat_intel_node)
     graph.add_node("dga_check", dga_check_node)
-    graph.add_node("supplementary_info", supplementary_info_node)
+    graph.add_node("parse_info", parse_info_node)
+    graph.add_node("website_analysis", website_analysis_node)
     graph.add_node("final_analysis", final_analysis_node)
 
     # Set entry point
-    graph.set_entry_point("initial_threat_intel")
+    graph.set_entry_point("dga_check")
 
-    # Add edges
-    graph.add_edge("initial_threat_intel", "dga_check")
-    graph.add_conditional_edges(
-        "dga_check",
-        should_gather_more_info,
-        {
-            "gather_supplementary_info": "supplementary_info",
-            "analyze_directly": "final_analysis",
-        }
-    )
-    graph.add_edge("supplementary_info", "final_analysis")
+    # Add edges - 新的流程：dga_check -> parse_info -> website_analysis -> final_analysis
+    graph.add_edge("dga_check", "parse_info")
+    graph.add_edge("parse_info", "website_analysis")
+    graph.add_edge("website_analysis", "final_analysis")
     graph.add_edge("final_analysis", END)
 
     # Compile the graph into a runnable app
     app = graph.compile()
 
+    final_state = None  # 初始化final_state变量
     try:
         # Run the graph
         final_state = run_graph_with_retry(app, domain)
@@ -697,12 +735,10 @@ def process_uncached_domain(domain):
 
         # --- Process the structured result ---
         result_output = (
-            f"性质: {report.status}\n"
+            f"Final Answer: {report.status}\n"
         )
         if report.label:
             result_output += f"类型：{report.label}\n"
-        if report.location:
-            result_output += f"地理位置：{report.location}\n"
         result_output += f"核心理由: {report.detail}"
         
         print("\n" + "="*50)
@@ -715,7 +751,7 @@ def process_uncached_domain(domain):
             f.write("\n" + "="*50 + f"\nDomain: {domain}\n" + result_output + "\n" + "="*50 + "\n")
         
         print(f"   [更新缓存] 将 '{domain}' 标记为 '{report.status}' 并写入缓存。")
-        append_to_cache_csv(domain, report.status, report.label, report.location, report.detail)
+        append_to_cache_csv(domain, report.status, report.label, report.detail)
         
         end_time = time.perf_counter()
         duration = end_time - start_time
@@ -727,28 +763,27 @@ def process_uncached_domain(domain):
         error_message = f"在分析域名 {domain} 时发生严重错误: {e}"
         print(error_message)
         # Optionally log the full state for debugging
-        print("--- ERROR STATE ---", final_state)
+        if final_state:
+            print("--- ERROR STATE ---", final_state)
+        else:
+            print("--- ERROR STATE --- 未获取到状态信息")
         return "ERROR"
 
 if __name__ == "__main__":
-    # if len(sys.argv) > 1:
-    #     domain = sys.argv[1].strip()
-    # else:
-    #     domain = input("请输入要查询的域名: ").strip()
-    
-    required_keys = ["VT_API_KEY", "OTX_API_KEY"]
+    # 检查API密钥
+    required_keys = ["OTX_API_KEY"]
     missing_keys = [key for key in required_keys if not os.environ.get(key)]
-    
     if missing_keys:
         print(f"错误: 以下环境变量未设置，程序无法继续: {', '.join(missing_keys)}")
         print("请在运行前设置好API密钥。")
         sys.exit(1) # 程序直接退出
-    
-    # 批量读取csv文件中的所有域名
-    csv_path = os.path.join(os.path.dirname(__file__), INPUT_FILE)
+
+    # 批量读取domains/url.csv中的所有域名
+    url_csv_path = os.path.join(os.path.dirname(__file__), INPUT_FILE)
     domains = []
-    with open(csv_path, 'r', encoding='utf-8') as f:
+    with open(url_csv_path, 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
+        header = next(reader, None)  # 跳过表头
         for row in reader:
             if row and row[0].strip():
                 # 只取第一列，去除前后空白
@@ -757,7 +792,7 @@ if __name__ == "__main__":
                 if domain.startswith('http://') or domain.startswith('https://'):
                     domain = domain.split('//', 1)[1].split('/')[0]
                 domains.append(domain)
-    
+
     print(f"共读取到 {len(domains)} 个待分析域名。\n")
     domain_cache = load_cache_from_csv()
     for idx, domain in enumerate(domains, 1):

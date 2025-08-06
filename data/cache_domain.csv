@@ -1,7 +1,4 @@
-domain,label,timestamp
-fei9988.3322.org,malicious,2025-07-01 15:00:29
-petchefexpressmn.com,malicious,2025-07-01 16:02:39
-fgawegwr.chez.com,suspicious,2025-07-01 17:09:07
-xred.mooo.com,malicious,2025-07-02 10:30:00
-mirefocus.com,safe,2025-07-03 09:50:42
-52eva.top,malicious,2025-07-03 09:56:11
+domain,status,label,location,detail,timestamp
+pgfsvwx.biz,Malicious,"C2服务器, 勒索软件, 钓鱼网站, MyloBot, 僵尸网络",美国,域名被OTX标记为高风险，关联MyloBot、Luna Moth/Silent Ransom Group勒索活动及C2服务器，并被VirusTotal的15家安全厂商判定为恶意。,2025-07-24 15:12:05
+jlqltsjvh.biz,Malicious,"C2服务器, 钓鱼网站",美国,域名被OTX标记为高风险并关联多起恶意软件活动，VirusTotal检测到15个安全厂商确认其恶意性，且注册信息使用隐私保护，符合恶意域名特征。,2025-07-24 15:13:27
+www.torrentsnipe.info,Malicious,"恶意软件,C2服务器",美国,域名被防火墙拦截标记为恶意软件，且SSL证书与域名不匹配，历史IP记录显示长期使用不同国家服务器，邮件安全记录缺失，存在高风险恶意行为特征。,2025-08-05 17:33:34

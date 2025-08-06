@@ -95,3 +95,485 @@ SSL证书状态: 未找到SSL证书。
 类型：恶意邮件
 核心理由: VirusTotal将其标记为恶意，且MX记录指向可疑域名，无SSL证书。
 ==================================================
+
+==================================================
+Agent stopped due to iteration limit or time limit.
+==================================================
+
+==================================================
+The provided information is a list of DNS records and metadata for the domain `cannabispicture.com`. Here’s a breakdown:
+
+- **Address**: IP address or hostname related to the domain.
+- **First Seen** and **Last Seen**: Time periods when this record was observed in the network.
+- **Type (record_type)**: DNS record type (e.g., A for IPv4 addresses, NS for name servers, SOA for start of authority).
+- **Country Flag (flag_url)**: URL to a flag representing the country associated with the IP address or hostname. Some entries have an empty string indicating no specific country.
+- **Country Title (flag_title)**: The title attribute for the flag icon, which indicates the name of the country.
+
+Key DNS records and their details:
+
+1. IPv4 Addresses:
+   - `204.11.56.48` - Associated with Neustar Inc., located in the Netherlands.
+   - `104.27.151.73` - Cloudflare, United States.
+   - `199.59.242.150` - Bodis LLC, United States.
+
+2. Name Servers:
+   - `ns2.dynadot.com`
+   - `ns1.dynadot.com`
+
+3. SOA Records (Start of Authority):
+   - `ns1.dynadot.com`
+
+Historical IP Addresses:
+- `85.17.35.27` in the Netherlands, seen around 2009.
+- `64.207.145.190` associated with GoDaddy LLC.
+
+**Total Count**: 19 DNS records listed.
+
+This summary gives a historical overview of changes in the domain's infrastructure and management over time.
+==================================================
+
+==================================================
+The provided JSON object contains a list of IP address mappings with metadata such as hostnames, timestamps, and ASN details. Each entry represents an IPv4 address associated with one or more hostnames over time, managed by OVH SAS (Autonomous System Number 16276).
+
+Key Points:
+- **address**: The IPv4 address.
+- **first/last**: Timestamps indicating the period during which this IP/hostname mapping was observed.
+- **hostname**: Hostname associated with the IP address at some point in time.
+- **indicator_link**: A link for further details about the specific event or data related to the IP/Hostname combination.
+- **flag_url**: Links to country flags, indirectly indicating the geographical location associated with the ASN (OVH SAS).
+- **asn**: The Autonomous System Number of OVH SAS.
+
+Observations:
+- All entries belong to AS16276 managed by OVH SAS.
+- Timestamps span from June 2019 to present for some records, showing usage patterns over time.
+- There are a total of 143 unique IP/hostname mappings in the list.
+
+This dataset can be valuable for network analysis, security research, and understanding the operational landscape of OVH SAS's infrastructure.
+==================================================
+
+==================================================
+该域名在过去曾被正常使用过，并且有SSL证书记录；目前没有威胁情报表明存在安全风险，但由于无法获取当前网站内容，需要进一步检查DNS和服务器设置以确认原因。
+==================================================
+
+==================================================
+The provided data is a list of network records associated with the domain `votsawat.com`. Each record includes information such as IP addresses, hostnames, and timestamps indicating when these records were first seen and last updated. Here's an analysis of some key points from this dataset:
+
+1. **IP Addresses**: The most common IP address in the list is `192.185.52.231`, which appears multiple times with different record types (A, CNAME) for both `votsawat.com` and subdomains like `www.votsawat.com`.
+
+2. **Record Types**: The dataset includes various DNS record types such as A (address), NS (name server), SOA (start of authority), and CNAME (canonical name). These records help in understanding the domain's DNS configuration.
+
+3. **Timestamps**: Records span a range from 2019 to 2023, indicating that `votsawat.com` has been active for several years with updates made periodically.
+
+4. **Name Servers**: The dataset shows transitions between different name servers (e.g., `ns35.domaincontrol.com`, `ns36.domaincontrol.com`, and later `ns35.domaincontrol.com`). This suggests that the domain management might have changed hands or configurations over time.
+
+5. **Subdomains**: Besides the main domain, there are records for subdomains like `www.votsawat.com` and `thestreetstyles.votsawat.com`.
+
+6. **ASN (Autonomous System Number)**: The ASN associated with most of these records is AS46606, which indicates that the network provider or hosting service has changed over time.
+
+### Summary
+The dataset provides a comprehensive view of how `votsawat.com` and its subdomains have been managed through DNS changes. It shows transitions in IP addresses, name servers, and configurations over several years, indicating an evolving online presence for this domain.
+==================================================
+
+==================================================
+inspirasiproperty.com
+---------- Analysis Data Summary ----------
+DGA Model Detection: Non-DGA (Based on DGA model results)
+Whois Information: No WHOIS registration information found, possibly using privacy protection.
+IP Address and Geolocation: Historical records show the domain resolved to IPs in Indonesia (103.152.242.2), United States (199.59.242.150), and Canada (192.154.143.220). Uses DNS servers from dewaweb.com and webnic.cc.
+SSL Certificate Status: SSL certificate for subdomain autoconfig.inspirasiproperty.com issued by Let’s Encrypt expired in 2022.
+Website Content Summary: Website unreachable; failed to fetch homepage content.
+Threat Intelligence Summary: OTX and VirusTotal reported no malicious activity.
+
+---------- Domain Verdict ----------
+Risk Level: Low Risk (Safe Domain)
+Threat Type: N/A
+Key Rationale: The domain shows no signs of malicious behavior based on threat intelligence, DGA detection, or historical DNS data. While some factors are inconclusive (e.g., missing WHOIS info, expired SSL cert), there is no evidence suggesting active malicious intent.
+==================================================
+
+==================================================
+该域名存在一定的风险。建议进一步调查其历史行为和当前用途以确认是否为恶意或可疑的活动。由于SSL证书过期、Whois状态异常以及DNS解析问题，建议对该域名保持警惕，并进行更深入的安全检查。
+==================================================
+
+==================================================
+- 当前状态: 没有直接证据表明恶意行为。
+- 后续步骤: 需要进一步调查VirusTotal报告和最近的IP历史。
+==================================================
+
+==================================================
+查询 `atampy.com` 的被动 DNS 记录显示该域名在过去与多个 IP 地址相关联。以下是主要发现的摘要：
+
+- **2014年7月31日**：域名托管在 `54.186.238.171`，这是亚马逊网络服务（AWS）的一个IP地址。
+- **2015年6月30日**：它迁移到了由GoDaddy管理的另一个 AWS IP 地址 `184.168.221.45`。
+- **2016年9月1日**：域名托管在日本的一个IP地址 `58.158.177.102`，这可能表明更换了不同的主机提供商或位置。
+- **2020年4月20日**：它切换回由PEG Tech Inc管理的美国IP地址 `198.200.50.115`。
+- **2022年1月9日**：域名托管在与Internet HostSpace Global Inc相关的IP地址 `154.94.185.169`。
+
+此外，还有子域如 `www.atampy.com` 在不同时期托管在不同的 IP 地址上：
+- **2014年7月22日**：该子域托管在AWS的IP地址 `54.186.238.171`。
+- **2020年4月20日**：它也使用了与主域名相同的IP地址 `198.200.50.115`。
+
+历史数据表明，`atampy.com` 曾经托管在不同地区和提供商的多个 IP 地址上。这可能意味着托管服务的变化或如果这些 IP 与已知恶意活动相关联，则可能是可疑行为的历史记录。
+
+鉴于IP地址和位置的多样性，进一步调查每个IP的声誉以及任何最近的活动是明智之举，以确定是否存在担忧的理由。
+==================================================
+
+==================================================
+Suspicious Domain
+Risk Level: Medium Risk
+Threat Type: Potential phishing or malware distribution
+Reason: VirusTotal flagged the domain as suspicious with 3 vendors identifying it as malicious, and while OTX did not find direct threat intelligence, the combination of inconclusive DGA detection and the need for further analysis of DNS/SSL/website content suggests potential malicious activity requiring closer monitoring.
+==================================================
+
+==================================================
+The domain **mirefocus.com** does not show clear evidence of malicious activity based on the following analysis:  
+
+1. **Threat Intelligence**: No malicious indicators were found by OTX or VirusTotal.  
+2. **DNS Records**: Historical DNS records indicate the domain has been associated with multiple IP addresses across different regions (e.g., US, Switzerland, Japan), but no recent malicious activity is flagged.  
+3. **Email Security**: SPF, DMARC, and DKIM records are missing, which may indicate poor email security configuration but does not confirm malicious intent.  
+4. **SSL Certificate**: No valid SSL certificate was found, which could suggest the site is not secured with HTTPS or the certificate is unregistered.  
+5. **Website Content**: The site appears inaccessible or non-functional (no content fetched), which may be due to technical issues or lack of active hosting.  
+
+**Conclusion**: While the domain exhibits configuration issues (e.g., missing email security records, no SSL certificate), there is no definitive evidence of malicious activity. Further investigation into the site's current hosting and operational status may be warranted.  
+
+**Verdict**: **Safe** (no malicious activity detected).
+==================================================
+
+==================================================
+Malicious Domain  
+Risk Level: High Risk  
+Threat Type: Malware Distribution, Ransomware, Spyware  
+Reason: 域名 'xred.mooo.com' 被OTX平台关联到多个恶意活动脉冲（包括Rafel远程RAT、RansomX勒索软件、SpyInfo间谍软件等），且VirusTotal安全声誉评估显示14个安全厂商将其标记为恶意，表明该域名高度可能参与恶意软件分发、勒索攻击及间谍行为。
+==================================================
+
+==================================================
+该域名 **petchefexpressmn.com** 存在以下可疑特征：  
+1. **SSL证书过期**：证书由 Starfield Secure Certification Authority 颁发，有效期至 **2010年12月9日**，已严重过期，表明其安全性无法保障。  
+2. **缺乏邮件验证记录**：未找到 MX、SPF 或 DMARC 记录，这通常与钓鱼网站或恶意域名相关。  
+3. **无法解析 DNS 信息**：DNS IP Resolver 和 Passive DNS Fetcher 均未能获取有效数据，可能表明域名未正确配置或存在技术问题。  
+
+**结论**：基于 SSL 证书过期和缺乏邮件验证记录，该域名 **高度疑似恶意**，建议用户避免访问。
+==================================================
+
+==================================================
+Suspicious Domain  
+等级：中风险（可疑IP）  
+类型：网络钓鱼  
+核心理由: 域名的SSL证书由不受信任的机构颁发，网站内容包含诱导用户提交个人信息的可疑关键词，且DNS记录配置不完整，存在被用于网络钓鱼攻击的高风险。
+==================================================
+
+==================================================
+Safe Domain  
+等级：低风险（安全IP）  
+核心理由: 域名未发现与已知威胁情报关联，DGA检测无异常，DNS记录和SSL证书配置正常，网站内容无可疑特征。
+==================================================
+
+==================================================
+Agent stopped due to iteration limit or time limit.
+==================================================
+
+==================================================
+Domain: cannabispicture.com
+Final Answer: Malicious Domain
+
+==================================================
+
+==================================================
+Domain: inspirasiproperty.com
+Final Answer: Safe
+核心理由: 该域名在所有已知安全评估中均显示为低风险，无恶意或可疑行为的证据。
+==================================================
+
+==================================================
+Domain: inspirasiproperty.com
+Final Answer: Safe
+核心理由: 域名 'inspirasiproperty.com' 的各项指标显示其为低风险，无恶意行为的证据。
+==================================================
+
+==================================================
+Domain: cannabispicture.com
+Final Answer: Malicious
+类型：Parked Site Hosting Malicious Content
+核心理由: VirusTotal identifies the domain as high-risk with 6 security vendors flagging it as malicious, and website classification labels it as 'Malicious' and 'Parked Site'.
+==================================================
+
+==================================================
+Domain: cannabispicture.com
+Final Answer: Malicious
+类型：钓鱼网站，非法药物相关恶意内容分发
+核心理由: VirusTotal综合评估显示该域名被6个安全厂商标记为恶意，且网站分类明确标注为'Malicious'和'Marijuana'，高度疑似用于非法药物交易或钓鱼攻击。
+==================================================
+
+==================================================
+Domain: huatu.98youxi.com
+Final Answer: Safe
+核心理由: 未发现恶意特征，VirusTotal和OTX均未标记为威胁，DGA检测正常且安全评级为低风险。
+==================================================
+
+==================================================
+Domain: micard-asf.com
+Final Answer: Malicious
+类型：钓鱼网站或恶意软件分发
+核心理由: VirusTotal检测结果显示11个安全厂商将其标记为恶意，综合评估为高风险。
+==================================================
+
+==================================================
+Domain: s2i-evolution.fr
+Final Answer: Malicious
+类型：钓鱼网站
+核心理由: VirusTotal检测显示7个安全厂商标记该域名恶意，且网站分类明确指向钓鱼和欺诈行为。
+==================================================
+
+==================================================
+Domain: votsawat.com
+Final Answer: Malicious
+类型：钓鱼网站
+核心理由: VirusTotal检测到5个安全厂商标记该域名为恶意，且网站分类明确标注为Phishing。
+==================================================
+
+==================================================
+Domain: xt.freebuf.info
+Final Answer: Malicious
+类型：挖矿木马C2服务器
+核心理由: OTX情报显示该域名与MadoMiner挖矿木马IOC强关联，且被标记为高风险，表明其可能作为恶意矿池的控制服务器使用。
+==================================================
+
+==================================================
+Domain: xt.freebuf.info
+Final Answer: Malicious
+类型：C2服务器
+核心理由: OTX情报显示该域名与MadoMiner挖矿木马的IOC关联，且评级为高风险，表明其可能作为恶意软件的控制服务器使用。
+==================================================
+
+==================================================
+Domain: xt.freebuf.info
+Final Answer: Malicious
+类型：C2服务器，挖矿木马分发
+核心理由: OTX威胁情报显示该域名与MadoMiner挖矿木马的IOC高度关联，且评级为高风险，表明其可能作为恶意软件的控制服务器或分发节点使用。
+==================================================
+
+==================================================
+Domain: irc.freenode.net
+Final Answer: Safe
+类型：-
+核心理由: 域名 irc.freenode.net 为知名开源社区 IRC 服务节点，其 DNS 记录分布合理，SSL 证书由 Let's Encrypt 签发且有效，未发现异常 C2 通信模式或钓鱼特征。
+==================================================
+
+==================================================
+Domain: http://gradio.danghf.cn
+Final Answer: Suspicious
+类型：未配置邮件安全措施且无法获取网站内容
+核心理由: 域名未配置SPF/DMARC邮件验证机制，且网站内容无法访问，存在潜在安全风险
+==================================================
+
+==================================================
+Domain: gradio.danghf.cn
+Final Answer: Safe
+类型：-
+核心理由: 域名未被主流威胁情报平台标记为恶意，SSL证书有效，DNS解析正常且无历史可疑记录，综合评估风险较低。
+==================================================
+
+==================================================
+Domain: xred.mooo.com
+Final Answer: Malicious
+OTX威胁情报: ['In pulse: Python Initiated connection | Spyware', 'In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: PCRat - Malware Domain Feed V2', 'In pulse: Darpapox CNC Beacon • Tethered to T-Mobile iOS', 'In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Remote RAT Rafel malware “Sweet Home”  Privacy.SpyInfoRATs', 'In pulse: TikTok - Win32:RansomX-gen [Ransom]', 'In pulse: https://house.mo.gov/ Palantir Technologies HARMFUL (copied  OctoseekPulse)  Attacks SA victims?', 'In pulse: tomemb', 'In pulse: fileshare.eshop.bg', 'In pulse: Graphite Mercenary Spyware? Skynet- I failed to adequately research prior pulse. Uh….hi!', 'In pulse: BotX | Multiple attack affects ‘alleged’ Workforce agency', 'In pulse: Sality - Malware Domain Feed V2', 'In pulse: Sality - Malware Domain Feed V2', 'In pulse: Home - RMHS - Ransom', 'In pulse: Twitter adware.domaiq/lollipop - Pegasus related | iOS  | Twitter intel', 'In pulse: Highjacked iOS-cobalt-strike_elex_hijackloader | Host - Twitter l', 'In pulse:  Highjacked iOS-cobalt-strike_elex_hijackloader', 'In pulse: iOS devices data remotely manipulated', 'In pulse: Gather Victim Host Information | Ecosia - Clients2.Google.com', 'In pulse: Threatfox Recent Additions', 'In pulse: ELF:Mirai AMAZON-02 - Autonomous System  65.0.0.0/14', 'In pulse: CraxsRat V7.4.exe', 'In pulse: gap-facebook.com', 'In pulse: Synaptics.exe', 'In pulse: Copy of oh another EXPLORER.exe - 03.10.24 (by jwanihad)', 'In pulse: https://ginko.garden/pl/contact tel:+48 797 920 339  ip4 77.79.221.180   77.79.221.148', 'In pulse: Bdaejec - Malware Domain Feed V2', 'In pulse: University of Alberta Azure/Entra Compromised Tenant Compromized Institution', 'In pulse: Twitter Feed - sicehice - 24-12-2024', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test']
+类型：C2服务器
+核心理由: 域名被多个威胁情报平台标记为高风险，涉及间谍软件、勒索软件、远程访问木马（RAT）及恶意软件分发活动，且VirusTotal检测显示14家安全厂商判定为恶意。
+==================================================
+
+==================================================
+Domain: votsawat.com
+Final Answer: Malicious
+类型：钓鱼网站
+核心理由: VirusTotal检测到5个安全厂商标记为恶意，且网站分类明确标注为Phishing，存在高风险行为模式。
+==================================================
+
+==================================================
+Domain: s2i-evolution.fr
+Final Answer: Malicious
+类型：钓鱼网站
+核心理由: VirusTotal检测到7个安全厂商标记为恶意，且网站分类明确包含钓鱼和欺诈相关标签。
+==================================================
+
+==================================================
+Domain: pichainmall.com
+Final Answer: Suspicious
+类型：未设置DMARC策略，存在邮件欺骗风险
+核心理由: 域名未配置DMARC邮件验证策略，且SPF记录包含自定义IP地址，可能被用于网络钓鱼或邮件欺诈。
+==================================================
+
+==================================================
+Domain: xt.freebuf.info
+Final Answer: Malicious
+OTX威胁情报: ['In pulse: MadoMiner', 'In pulse: Bán đất thôn Cổ Điển A, Tứ Hiệp, Thanh Trì, Hà Nội.', 'In pulse: MadoMiner挖矿木马IOC', 'In pulse: MadoMiner', 'In pulse: Bán đất thôn Cổ Điển A, Tứ Hiệp, Thanh Trì, Hà Nội.', 'In pulse: MadoMiner挖矿木马IOC']
+类型：挖矿木马C2服务器
+核心理由: OTX高风险评级及多次关联MadoMiner挖矿木马IOC表明该域名可能作为恶意挖矿木马的命令与控制服务器使用
+==================================================
+
+==================================================
+Domain: xred.mooo.com
+Final Answer: Malicious
+OTX威胁情报: ['In pulse: Python Initiated connection | Spyware', 'In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: PCRat - Malware Domain Feed V2', 'In pulse: Darpapox CNC Beacon • Tethered to T-Mobile iOS', 'In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Remote RAT Rafel malware “Sweet Home”  Privacy.SpyInfoRATs', 'In pulse: TikTok - Win32:RansomX-gen [Ransom]', 'In pulse: https://house.mo.gov/ Palantir Technologies HARMFUL (copied  OctoseekPulse)  Attacks SA victims?', 'In pulse: tomemb', 'In pulse: fileshare.eshop.bg', 'In pulse: Graphite Mercenary Spyware? Skynet- I failed to adequately research prior pulse. Uh….hi!', 'In pulse: BotX | Multiple attack affects ‘alleged’ Workforce agency', 'In pulse: Sality - Malware Domain Feed V2', 'In pulse: Sality - Malware Domain Feed V2', 'In pulse: Home - RMHS - Ransom', 'In pulse: Twitter adware.domaiq/lollipop - Pegasus related | iOS  | Twitter intel', 'In pulse: Highjacked iOS-cobalt-strike_elex_hijackloader | Host - Twitter l', 'In pulse:  Highjacked iOS-cobalt-strike_elex_hijackloader', 'In pulse: iOS devices data remotely manipulated', 'In pulse: Gather Victim Host Information | Ecosia - Clients2.Google.com', 'In pulse: Threatfox Recent Additions', 'In pulse: ELF:Mirai AMAZON-02 - Autonomous System  65.0.0.0/14', 'In pulse: CraxsRat V7.4.exe', 'In pulse: gap-facebook.com', 'In pulse: Synaptics.exe', 'In pulse: Copy of oh another EXPLORER.exe - 03.10.24 (by jwanihad)', 'In pulse: https://ginko.garden/pl/contact tel:+48 797 920 339  ip4 77.79.221.180   77.79.221.148', 'In pulse: Bdaejec - Malware Domain Feed V2', 'In pulse: University of Alberta Azure/Entra Compromised Tenant Compromized Institution', 'In pulse: Twitter Feed - sicehice - 24-12-2024', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test']
+类型：C2服务器
+核心理由: OTX和VirusTotal均标记为高风险，多个安全厂商确认其恶意性，关联情报包含间谍软件、勒索软件、恶意软件C2服务器等特征。
+==================================================
+
+==================================================
+Domain: file.uhsea.com
+Final Answer: Malicious
+OTX威胁情报: ['In pulse: URLHaus data - 25-06-2025']
+类型：C2服务器
+核心理由: VirusTotal检测到14个安全厂商标记为恶意，结合OTX中URLHaus数据关联，高度怀疑为恶意域名
+==================================================
+
+==================================================
+Domain: xred.mooo.com
+Final Answer: Malicious
+OTX威胁情报: ['In pulse: Python Initiated connection | Spyware', 'In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: PCRat - Malware Domain Feed V2', 'In pulse: Darpapox CNC Beacon • Tethered to T-Mobile iOS', 'In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Remote RAT Rafel malware “Sweet Home”  Privacy.SpyInfoRATs', 'In pulse: TikTok - Win32:RansomX-gen [Ransom]', 'In pulse: https://house.mo.gov/ Palantir Technologies HARMFUL (copied  OctoseekPulse)  Attacks SA victims?', 'In pulse: tomemb', 'In pulse: fileshare.eshop.bg', 'In pulse: Graphite Mercenary Spyware? Skynet- I failed to adequately research prior pulse. Uh….hi!', 'In pulse: BotX | Multiple attack affects ‘alleged’ Workforce agency', 'In pulse: Sality - Malware Domain Feed V2', 'In pulse: Sality - Malware Domain Feed V2', 'In pulse: Home - RMHS - Ransom', 'In pulse: Twitter adware.domaiq/lollipop - Pegasus related | iOS  | Twitter intel', 'In pulse: Highjacked iOS-cobalt-strike_elex_hijackloader | Host - Twitter l', 'In pulse:  Highjacked iOS-cobalt-strike_elex_hijackloader', 'In pulse: iOS devices data remotely manipulated', 'In pulse: Gather Victim Host Information | Ecosia - Clients2.Google.com', 'In pulse: Threatfox Recent Additions', 'In pulse: ELF:Mirai AMAZON-02 - Autonomous System  65.0.0.0/14', 'In pulse: CraxsRat V7.4.exe', 'In pulse: gap-facebook.com', 'In pulse: Synaptics.exe', 'In pulse: Copy of oh another EXPLORER.exe - 03.10.24 (by jwanihad)', 'In pulse: https://ginko.garden/pl/contact tel:+48 797 920 339  ip4 77.79.221.180   77.79.221.148', 'In pulse: Bdaejec - Malware Domain Feed V2', 'In pulse: University of Alberta Azure/Entra Compromised Tenant Compromized Institution', 'In pulse: Twitter Feed - sicehice - 24-12-2024', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test']
+类型：远程访问木马, 勒索软件, C2服务器, 间谍软件, 恶意域名
+核心理由: 域名被多个威胁情报平台标记为高风险，关联了远程访问木马（RAT）、勒索软件（RansomX-gen）、C2服务器（Darpapox CNC Beacon）及间谍软件（Spyware）等多类恶意行为，且VirusTotal检测到14家安全厂商判定其为恶意域名。
+==================================================
+
+==================================================
+Domain: xt.freebuf.info
+Final Answer: Malicious
+OTX威胁情报: ['In pulse: MadoMiner', 'In pulse: Bán đất thôn Cổ Điển A, Tứ Hiệp, Thanh Trì, Hà Nội.', 'In pulse: MadoMiner挖矿木马IOC', 'In pulse: MadoMiner', 'In pulse: Bán đất thôn Cổ Điển A, Tứ Hiệp, Thanh Trì, Hà Nội.', 'In pulse: MadoMiner挖矿木马IOC']
+类型：远程访问木马,C2服务器
+核心理由: OTX威胁情报显示该域名与MadoMiner挖矿木马IOC强关联，且存在高风险评级，表明其可能作为恶意矿池的C2通信节点使用。
+==================================================
+
+==================================================
+Domain: pichainmall.com
+Final Answer: Suspicious
+类型：缺少DMARC记录，可能被用于网络钓鱼
+核心理由: 域名未配置DMARC邮件验证策略，且部分网络连接指向阿里巴巴云服务器但缺乏明确业务标识，存在安全配置缺陷和潜在滥用风险
+==================================================
+
+==================================================
+Domain: pichainmall.com
+Final Answer: Suspicious
+类型：钓鱼网站, 垃圾邮件
+核心理由: 域名未配置DMARC策略且SPF记录包含未验证的IP地址，SSL证书仅覆盖邮件服务器且有效期异常长，网站内容含Telegram链接和未明确业务的加密货币相关宣传。
+==================================================
+
+==================================================
+Domain: cwyfknmwh.biz
+Final Answer: Malicious
+类型：C2服务器
+核心理由: VirusTotal检测到14个安全厂商标记为恶意，且DGA检测显示域名疑似由恶意生成算法生成，符合C2服务器特征。
+==================================================
+
+==================================================
+Domain: qvuhsaqa.biz
+Final Answer: Malicious
+类型：远程访问木马, C2服务器
+核心理由: VirusTotal检测到14个安全厂商标记该域名恶意，且无任何厂商标记为可疑，综合评估为高风险。
+==================================================
+
+==================================================
+Domain: xred.mooo.com
+Final Answer: Malicious
+OTX威胁情报: ['In pulse: Python Initiated connection | Spyware', 'In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: PCRat - Malware Domain Feed V2', 'In pulse: Darpapox CNC Beacon • Tethered to T-Mobile iOS', 'In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Remote RAT Rafel malware “Sweet Home”  Privacy.SpyInfoRATs', 'In pulse: TikTok - Win32:RansomX-gen [Ransom]', 'In pulse: https://house.mo.gov/ Palantir Technologies HARMFUL (copied  OctoseekPulse)  Attacks SA victims?', 'In pulse: tomemb', 'In pulse: fileshare.eshop.bg', 'In pulse: Graphite Mercenary Spyware? Skynet- I failed to adequately research prior pulse. Uh….hi!', 'In pulse: BotX | Multiple attack affects ‘alleged’ Workforce agency', 'In pulse: Sality - Malware Domain Feed V2', 'In pulse: Sality - Malware Domain Feed V2', 'In pulse: Home - RMHS - Ransom', 'In pulse: Twitter adware.domaiq/lollipop - Pegasus related | iOS  | Twitter intel', 'In pulse: Highjacked iOS-cobalt-strike_elex_hijackloader | Host - Twitter l', 'In pulse:  Highjacked iOS-cobalt-strike_elex_hijackloader', 'In pulse: iOS devices data remotely manipulated', 'In pulse: Gather Victim Host Information | Ecosia - Clients2.Google.com', 'In pulse: Threatfox Recent Additions', 'In pulse: ELF:Mirai AMAZON-02 - Autonomous System  65.0.0.0/14', 'In pulse: CraxsRat V7.4.exe', 'In pulse: gap-facebook.com', 'In pulse: Synaptics.exe', 'In pulse: Copy of oh another EXPLORER.exe - 03.10.24 (by jwanihad)', 'In pulse: https://ginko.garden/pl/contact tel:+48 797 920 339  ip4 77.79.221.180   77.79.221.148', 'In pulse: Bdaejec - Malware Domain Feed V2', 'In pulse: University of Alberta Azure/Entra Compromised Tenant Compromized Institution', 'In pulse: Twitter Feed - sicehice - 24-12-2024', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test']
+类型：远程访问木马,C2服务器,勒索软件,间谍软件
+核心理由: OTX威胁情报显示该域名与多起恶意活动相关，包括远程访问木马、勒索软件及C2服务器，VirusTotal检测到14个安全厂商标记为恶意。
+==================================================
+
+==================================================
+Domain: xred.mooo.com
+Final Answer: Malicious
+OTX威胁情报: ['In pulse: Python Initiated connection | Spyware', 'In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: Crowdsourced research | IP 192.229.221.95', 'In pulse: PCRat - Malware Domain Feed V2', 'In pulse: Darpapox CNC Beacon • Tethered to T-Mobile iOS', 'In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Remote RAT Rafel malware “Sweet Home”  Privacy.SpyInfoRATs', 'In pulse: TikTok - Win32:RansomX-gen [Ransom]', 'In pulse: https://house.mo.gov/ Palantir Technologies HARMFUL (copied  OctoseekPulse)  Attacks SA victims?', 'In pulse: tomemb', 'In pulse: fileshare.eshop.bg', 'In pulse: Graphite Mercenary Spyware? Skynet- I failed to adequately research prior pulse. Uh….hi!', 'In pulse: BotX | Multiple attack affects ‘alleged’ Workforce agency', 'In pulse: Sality - Malware Domain Feed V2', 'In pulse: Sality - Malware Domain Feed V2', 'In pulse: Home - RMHS - Ransom', 'In pulse: Twitter adware.domaiq/lollipop - Pegasus related | iOS  | Twitter intel', 'In pulse: Highjacked iOS-cobalt-strike_elex_hijackloader | Host - Twitter l', 'In pulse:  Highjacked iOS-cobalt-strike_elex_hijackloader', 'In pulse: iOS devices data remotely manipulated', 'In pulse: Gather Victim Host Information | Ecosia - Clients2.Google.com', 'In pulse: Threatfox Recent Additions', 'In pulse: ELF:Mirai AMAZON-02 - Autonomous System  65.0.0.0/14', 'In pulse: CraxsRat V7.4.exe', 'In pulse: gap-facebook.com', 'In pulse: Synaptics.exe', 'In pulse: Copy of oh another EXPLORER.exe - 03.10.24 (by jwanihad)', 'In pulse: https://ginko.garden/pl/contact tel:+48 797 920 339  ip4 77.79.221.180   77.79.221.148', 'In pulse: Bdaejec - Malware Domain Feed V2', 'In pulse: University of Alberta Azure/Entra Compromised Tenant Compromized Institution', 'In pulse: Twitter Feed - sicehice - 24-12-2024', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test']
+类型：远程访问木马, C2服务器, 勒索软件, 间谍软件
+核心理由: OTX和VirusTotal均标记为高风险，关联多个恶意软件家族（如Rafel RAT、RansomX-gen勒索软件）、C2通信及数据窃取行为，且14家安全厂商确认恶意性。
+==================================================
+
+==================================================
+Domain: cwyfknmwh.biz
+Final Answer: Malicious
+OTX威胁情报: ['In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: iOS Remote process — chrome_pwa_launcher.exe | Bounty - Mionitered Target', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: test', 'In pulse: Malware - Malware Domain Feed V2 - 11.93.2020  [Pulse by otxrobottwo_testing]', 'In pulse: Malware - Malware Domain Feed V2 - 11.93.2020  [Pulse by otxrobottwo_testing]', 'In pulse: Malware - Malware Domain Feed V2 - 11.93.2020  [Pulse by otxrobottwo_testing]', 'In pulse: Luna Moth/Silent Ransom Group Callback Phishing Extortion Campaign', 'In pulse: Luna Moth/Silent Ransom Group Callback Phishing Extortion Campaign', 'In pulse: Apple Music.app (by @kailula)', 'In pulse: IOCS202210160921', 'In pulse: Apple Music.app', 'In pulse: Network IOCs                     (Pulse Created by cnoscsoc@att.com)', 'In pulse: Network IOCs                     (Pulse Created by cnoscsoc@att.com)', 'In pulse: Network IOCs                     (Pulse Created by cnoscsoc@att.com)', 'In pulse: Network IOCs                     (Pulse Created by cnoscsoc@att.com)', 'In pulse: Apple Music.app (by @kailula)', 'In pulse: Network IOCs', 'In pulse: [2023-04-18] Domain generation algorithm List', 'In pulse: Expiro Malware', 'In pulse: Threat Intel Report - W43-2022.pdf', 'In pulse: IOCS202210160921', 'In pulse: Apple Music.app', 'In pulse: Dridex malware indicators | 20220105', 'In pulse: Malware dataset 20220101 | Network']
+类型：勒索软件C2服务器, 钓鱼网站
+核心理由: OTX和VirusTotal均标记为高风险，且存在与Luna Moth/Silent Ransom Group关联的回调行为及DGA特征，表明该域名极可能用于勒索软件的C2通信和钓鱼攻击。
+==================================================
+
+==================================================
+Domain: freebuf.info
+Final Answer: Malicious
+OTX威胁情报: ['In pulse: MadoMiner', 'In pulse: Bán đất thôn Cổ Điển A, Tứ Hiệp, Thanh Trì, Hà Nội.', 'In pulse: MadoMiner挖矿木马IOC', 'In pulse: MadoMiner', 'In pulse: Bán đất thôn Cổ Điển A, Tứ Hiệp, Thanh Trì, Hà Nội.', 'In pulse: MadoMiner挖矿木马IOC']
+类型：远程访问木马, C2服务器
+核心理由: OTX威胁情报显示该域名与MadoMiner挖矿木马IOC强关联，且VirusTotal检测到多个安全厂商标记为恶意程序，符合远程控制及恶意通信特征。
+==================================================
+
+==================================================
+Domain: hao.ttmmt.com
+Final Answer: Suspicious
+类型：未分类网站, 历史IP频繁变更
+核心理由: 域名历史DNS记录显示IP地址在新加坡、香港、日本多地变更，且缺乏完整的邮件安全配置（无MX/SPF/DMARC记录），结合VirusTotal中1家厂商标记为恶意，存在潜在风险
+==================================================
+
+==================================================
+Domain: ijnmvqa.biz
+Final Answer: Malicious
+OTX威胁情报: ['In pulse: iOS Remote process — chrome_pwa_launcher.exe | Bounty - Mionitered Target', 'In pulse: Luna Moth/Silent Ransom Group Callback Phishing Extortion Campaign', 'In pulse: Luna Moth/Silent Ransom Group Callback Phishing Extortion Campaign', 'In pulse: [2023-04-18] Domain generation algorithm List', 'In pulse: Expiro Malware', 'In pulse: NewDom-1-20220512', 'In pulse: NewDom-1-20220512', 'In pulse: DRIDEX | EN ENERO GENERA ACTIVIDAD', 'In pulse: Dridex malware indicators | 20220105', 'In pulse: Malware dataset 20220101 | Network']
+类型：勒索软件回调服务器, 恶意软件分发, 钓鱼攻击
+核心理由: 域名与Luna Moth/Silent Ransom Group的勒索活动、Expiro和Dridex恶意软件关联，且被13家安全厂商标记为恶意。
+==================================================
+
+==================================================
+Domain: shpwbsrw.biz
+Final Answer: Malicious
+OTX威胁情报: ['In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Malicious WiFi Internet network | trojan.morstar/bundler', 'In pulse: iOS Remote process — chrome_pwa_launcher.exe | Bounty - Mionitered Target', 'In pulse: MyloBot', 'In pulse: Expiro', 'In pulse: Domain-URL-IP-Hash-IOC', 'In pulse: Domain-URL-IP-Hash-IOC', 'In pulse: Malware - Malware Domain Feed V2 - 11.93.2020  [Pulse by otxrobottwo_testing]', 'In pulse: Malware - Malware Domain Feed V2 - 11.93.2020  [Pulse by otxrobottwo_testing]', 'In pulse: Malware - Malware Domain Feed V2 - 11.93.2020  [Pulse by otxrobottwo_testing]', 'In pulse: Luna Moth/Silent Ransom Group Callback Phishing Extortion Campaign', 'In pulse: Luna Moth/Silent Ransom Group Callback Phishing Extortion Campaign', 'In pulse: telus', 'In pulse: telus', 'In pulse: [2023-04-18] Domain generation algorithm List', 'In pulse: Expiro Malware', 'In pulse: DRIDEX | EN ENERO GENERA ACTIVIDAD', 'In pulse: Dridex malware indicators | 20220105', 'In pulse: Malware dataset 20220101 | Network']
+类型：C2服务器, 恶意软件分发
+核心理由: 域名被多个威胁情报源标记为高风险，并与MyloBot、Expiro、DRIDEX等恶意软件家族关联，VirusTotal检测到18个安全厂商标记为恶意。
+==================================================
+
+==================================================
+Domain: muapr.biz
+Final Answer: Malicious
+OTX威胁情报: ['In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Malware - Malware Domain Feed V2 - November 03 2020', 'In pulse: Trojan.Mybot-12000 | Parking Crew - Feebs Worm |', 'In pulse: Trojan.Mybot-12000 | Parking Crew - Feebs Worm |', 'In pulse: iOS Remote process — chrome_pwa_launcher.exe | Bounty - Mionitered Target', 'In pulse: Expiro', 'In pulse: Domain-URL-IP-Hash-IOC', 'In pulse: Domain-URL-IP-Hash-IOC', 'In pulse: Malware - Malware Domain Feed V2 - 11.93.2020  [Pulse by otxrobottwo_testing]', 'In pulse: Malware - Malware Domain Feed V2 - 11.93.2020  [Pulse by otxrobottwo_testing]', 'In pulse: Malware - Malware Domain Feed V2 - 11.93.2020  [Pulse by otxrobottwo_testing]', 'In pulse: Luna Moth/Silent Ransom Group Callback Phishing Extortion Campaign', 'In pulse: Luna Moth/Silent Ransom Group Callback Phishing Extortion Campaign', 'In pulse: IOCS202210160921', 'In pulse: [2023-04-18] Domain generation algorithm List', 'In pulse: Expiro Malware', 'In pulse: IOCS202210160921', 'In pulse: DRIDEX | EN ENERO GENERA ACTIVIDAD', 'In pulse: Dridex malware indicators | 20220105', 'In pulse: Malware dataset 20220101 | Network']
+类型：远程访问木马, 勒索软件, 僵尸网络, 钓鱼网站
+核心理由: 域名被OTX标记为高风险并关联到Mybot-12000木马、Feebs蠕虫、Luna Moth/Silent勒索集团钓鱼活动及Dridex恶意软件，VirusTotal有14家安全厂商判定为恶意。
+==================================================
+
+==================================================
+Domain: irc.freenode.net
+Final Answer: Safe
+类型：-
+核心理由: 域名 irc.freenode.net 为合法 IRC 服务器，DNS 记录显示其为正常网络服务配置，未发现恶意行为特征。
+==================================================
+
+==================================================
+Domain: pgfsvwx.biz
+性质: Suspicious
+类型：垃圾邮件
+地理位置：美国
+核心理由: 域名注册信息高度隐私保护，MX记录存在但未配置有效DMARC策略，DNS解析指向AWS云服务器且无明确威胁情报关联，存在被用于垃圾邮件的潜在风险
+==================================================
+
+==================================================
+Domain: jlqltsjvh.biz
+性质: Malicious
+类型：C2服务器, 勒索软件, 远程访问木马
+核心理由: 域名被OTX和VirusTotal多个高风险情报标记，关联Expiro、MyloBot、Luna Moth/Silent Ransom Group等恶意家族及勒索活动
+==================================================
+
+==================================================
+Domain: pgfsvwx.biz
+性质: Malicious
+类型：C2服务器, 勒索软件, 钓鱼网站, MyloBot, 僵尸网络
+地理位置：美国
+核心理由: 域名被OTX标记为高风险，关联MyloBot、Luna Moth/Silent Ransom Group勒索活动及C2服务器，并被VirusTotal的15家安全厂商判定为恶意。
+==================================================
+
+==================================================
+Domain: jlqltsjvh.biz
+性质: Malicious
+类型：C2服务器, 钓鱼网站
+地理位置：美国
+核心理由: 域名被OTX标记为高风险并关联多起恶意软件活动，VirusTotal检测到15个安全厂商确认其恶意性，且注册信息使用隐私保护，符合恶意域名特征。
+==================================================
+
+==================================================
+Domain: www.torrentsnipe.info
+性质: Malicious
+类型：恶意软件,C2服务器
+地理位置：美国
+核心理由: 域名被防火墙拦截标记为恶意软件，且SSL证书与域名不匹配，历史IP记录显示长期使用不同国家服务器，邮件安全记录缺失，存在高风险恶意行为特征。
+==================================================
