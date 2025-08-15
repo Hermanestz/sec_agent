@@ -55,12 +55,9 @@ def get_otx_domain_analyses(domain):
             for malware in malware_result:
                 if 'name' in malware:
                     alerts.append(malware['name'])
-        result = False
-        if len(alerts) > 5:
-            result = True
-        return result
+        return len(alerts)
     except Exception as e:
-        return False
+        return -1
 
 # 通过VT平台获取域名安全声誉
 def get_vt_domain_report(domain):
@@ -81,25 +78,22 @@ def get_vt_domain_report(domain):
         malicious_count = stats.get('malicious', 0)
         suspicious_count = stats.get('suspicious', 0)
         categories = list(data.get('categories', {}).values())
-        result = False
-        if malicious_count > 3:
-            result = True  
-        return result
+        return malicious_count
     except requests.exceptions.HTTPError as e:
-        return False
+        return -1
 
 # --- 主程序 ---
 
 # 1. 定义输入和输出文件名
-input_file_name = 'evaluation_domain/urlhaus_domains.csv'
-output_file_name = 'evaluation_domain/malicious_list_domains.csv'
-cache_file_name = 'evaluation_domain/cache_domains.csv'
+input_file_name = 'evaluation_domain/phish_domains.csv'
+output_file_name = 'evaluation_domain/phish_domains_result.csv'
+# cache_file_name = 'evaluation_domain/cache_domains.csv'
 
 # 2. 初始化用于去重的集合
 seen_hostnames = set()
 try:
     # 3. 使用 'with' 语句安全地打开所有文件
-    with open(cache_file_name, mode='r', encoding='utf-8', newline='') as cache_file:
+    with open(output_file_name, mode='r', encoding='utf-8', newline='') as cache_file:
         csv_reader = csv.DictReader(cache_file)
         for row in csv_reader:
             hostname = row['domain_name']
@@ -115,16 +109,16 @@ print(f"准备从文件 '{input_file_name}' 读取数据...")
 try:
     # 3. 使用 'with' 语句安全地打开所有文件
     with open(input_file_name, mode='r', encoding='utf-8', newline='') as infile, \
-         open(output_file_name, mode='a', encoding='utf-8', newline='') as outfile, \
-         open(cache_file_name, mode='a', encoding='utf-8', newline='') as cache_file:
+         open(output_file_name, mode='a', encoding='utf-8', newline='') as outfile:
+        #  open(cache_file_name, mode='a', encoding='utf-8', newline='') as cache_file:
 
         # 使用 DictReader 可以通过列名（如 'url'）来访问数据
         csv_reader = csv.DictReader(infile)
         # 为输出文件创建写入器并写入表头
         writer = csv.writer(outfile)
-        cache_writer = csv.writer(cache_file)
-        writer.writerow(['domain_name'])
-        cache_writer.writerow(['domain_name'])
+        # cache_writer = csv.writer(cache_file)
+        writer.writerow(['domain_name', 'otx_count', 'vt_count'])
+        # cache_writer.writerow(['domain_name'])
 
         print("开始处理数据，去重后分类写入文件...")
 
@@ -135,13 +129,16 @@ try:
             if hostname:
                     # 检查域名是否已经见过，如果没见过，则写入并添加到集合
                     if hostname not in seen_hostnames:
-                        if get_otx_domain_analyses(hostname) or get_vt_domain_report(hostname):
-                            writer.writerow([hostname])
-                            seen_hostnames.add(hostname)
-                            print(f"✅  {hostname} 验证成功")
-                        else:
-                            print(f"❌  {hostname} 验证失败")
-                        cache_writer.writerow([hostname])
+                        otx_count = get_otx_domain_analyses(hostname)
+                        vt_count = get_vt_domain_report(hostname)
+                        writer.writerow([hostname, otx_count, vt_count])
+                        print(f"✅  {hostname} - {otx_count} - {vt_count}")
+                        # if get_otx_domain_analyses(hostname) and get_vt_domain_report(hostname):
+                        #     writer.writerow([hostname, otx_count, vt_count])
+                        #     seen_hostnames.add(hostname)
+                        #     print(f"✅  {hostname} 验证成功")
+                        # else:
+                        #     print(f"❌  {hostname} 验证失败")
     print("\n处理完成！")
     print(f"总共处理了 {processed_rows} 行数据。")
 

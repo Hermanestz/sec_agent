@@ -1,8 +1,8 @@
 import sys
-from langchain.agents import Tool # type: ignore
+# from langchain.agents import Tool # type: ignore
 # from langchain_google_genai import ChatGoogleGenerativeAI # type: ignore
-from langchain.agents import initialize_agent, AgentType # type: ignore
-from langchain.chat_models import init_chat_model # type: ignore
+# from langchain.agents import initialize_agent, AgentType # type: ignore
+# from langchain.chat_models import init_chat_model # type: ignore
 from langchain_community.llms import Tongyi # type: ignore
 from langchain_community.chat_models import ChatZhipuAI # type: ignore
 from langchain_ollama import OllamaLLM # type: ignore
@@ -35,6 +35,7 @@ import json
 import joblib # type: ignore
 from collections import Counter # 新增
 import numpy as np # type: ignore
+import pandas as pd # type: ignore
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type # type: ignore
 from google.api_core.exceptions import ResourceExhausted # type: ignore
 from OTXv2 import OTXv2 # type: ignore
@@ -46,7 +47,8 @@ import IndicatorTypes # type: ignore
 CACHE_FILE = 'cache.csv'
 CSV_HEADER = ['domain', 'status', 'label', 'detail', 'timestamp']  # 定义CSV文件的表头
 LOG_FILE = 'log.txt'
-INPUT_FILE = 'malicious_list_domains.csv'
+INPUT_FILE = 'test.csv'
+
 
 # 全局变量存储OTX alerts
 # PROMPT_FILE = 'prompt_domain.txt'
@@ -73,46 +75,153 @@ def getValue(results, keys):
         return results
 
 
-# 在check_dga_with_ml函数中调用，提取域名字符串的DGA特征，返回特征值
-def extract_features_for_prediction(domain):
-    def get_entropy(s):
-        if not s: return 0
-        p = Counter(s)
-        return -sum(count / len(s) * np.log2(count / len(s)) for count in p.values())
-    def get_vowel_consonant_ratio(s):
-        s = s.lower(); vowels = "aeiou"; vowel_count = sum(1 for c in s if c in vowels); consonant_count = sum(1 for c in s if c.isalpha() and c not in vowels); return vowel_count / consonant_count if consonant_count else vowel_count
-    def get_digit_ratio(s):
-        return sum(1 for c in s if c.isdigit()) / len(s) if len(s) > 0 else 0
-    def get_longest_consecutive_chars(s, char_type='alpha'):
-        max_len = 0; current_len = 0
-        for char in s:
-            is_target = (char_type == 'alpha' and char.isalpha()) or \
-                        (char_type == 'digit' and char.isdigit()) or \
-                        (char_type == 'consonant' and char.isalpha() and char.lower() not in "aeiou")
-            if is_target: current_len += 1
-            else: max_len = max(max_len, current_len); current_len = 0
-        return max(max_len, current_len)
+# === DGA特征提取（移植自 dga_test/dga_detector_rf+llm.py） ===
+def _get_entropy(s: str) -> float:
+    if not s:
+        return 0.0
+    p = Counter(s)
+    return float(-sum(count / len(s) * np.log2(count / len(s)) for count in p.values()))
+
+def _get_vowel_consonant_ratio(s: str) -> float:
+    s = s.lower()
+    vowels = "aeiou"
+    vowel_count = sum(1 for char in s if char in vowels)
+    consonant_count = sum(1 for char in s if char.isalpha() and char not in vowels)
+    return vowel_count / (consonant_count if consonant_count != 0 else 1.0)
+
+def _get_digit_ratio(s: str) -> float:
+    if not s:
+        return 0.0
+    digit_count = sum(1 for char in s if char.isdigit())
+    return digit_count / len(s)
+
+def _get_longest_consecutive_chars(s: str, char_type: str = 'alpha') -> int:
+    max_len = 0
+    current_len = 0
+    for i in range(len(s)):
+        is_target = False
+        if char_type == 'alpha' and s[i].isalpha():
+            is_target = True
+        elif char_type == 'digit' and s[i].isdigit():
+            is_target = True
+        if is_target:
+            current_len += 1
+        else:
+            max_len = max(max_len, current_len)
+            current_len = 0
+    max_len = max(max_len, current_len)
+    return max_len
+
+def _get_ngram_features(domain: str, n: int = 2) -> dict:
+    if len(domain) < n:
+        return {}
+    ngrams = [domain[i:i+n] for i in range(len(domain) - n + 1)]
+    ngram_counts = Counter(ngrams)
+    features = {}
+    features[f'ngram_{n}_count'] = len(ngrams)
+    features[f'ngram_{n}_unique'] = len(ngram_counts)
+    features[f'ngram_{n}_diversity'] = len(ngram_counts) / len(ngrams) if ngrams else 0.0
+    if ngram_counts:
+        features[f'ngram_{n}_max_freq'] = max(ngram_counts.values())
+        features[f'ngram_{n}_avg_freq'] = sum(ngram_counts.values()) / len(ngram_counts)
+    else:
+        features[f'ngram_{n}_max_freq'] = 0
+        features[f'ngram_{n}_avg_freq'] = 0.0
+    return features
+
+def _get_character_frequency_features(domain: str) -> dict:
+    domain = domain.lower()
+    char_counts = Counter(domain)
+    total_chars = len(domain)
+    features = {}
+    letters = [c for c in domain if c.isalpha()]
+    features['letter_freq'] = len(letters) / total_chars if total_chars > 0 else 0.0
+    digits = [c for c in domain if c.isdigit()]
+    features['digit_freq'] = len(digits) / total_chars if total_chars > 0 else 0.0
+    special_chars = [c for c in domain if not c.isalnum()]
+    features['special_char_freq'] = len(special_chars) / total_chars if total_chars > 0 else 0.0
+    features['char_diversity'] = len(char_counts) / total_chars if total_chars > 0 else 0.0
+    if char_counts:
+        features['max_char_freq'] = max(char_counts.values()) / total_chars
+    else:
+        features['max_char_freq'] = 0.0
+    return features
+
+def _get_domain_structure_features(domain: str) -> dict:
+    features: dict = {}
+    parts = domain.split('.')
+    features['subdomain_count'] = len(parts) - 1
+    main_domain = parts[-1] if parts else ""
+    features['main_domain_length'] = len(main_domain)
+    if len(parts) > 1:
+        subdomain_lengths = [len(part) for part in parts[:-1]]
+        features['avg_subdomain_length'] = sum(subdomain_lengths) / len(subdomain_lengths)
+        features['max_subdomain_length'] = max(subdomain_lengths)
+        features['min_subdomain_length'] = min(subdomain_lengths)
+    else:
+        features['avg_subdomain_length'] = 0.0
+        features['max_subdomain_length'] = 0
+        features['min_subdomain_length'] = 0
+    features['domain_depth'] = len(parts)
+    features['has_digits'] = 1 if any(c.isdigit() for c in domain) else 0
+    features['has_hyphen'] = 1 if '-' in domain else 0
+    features['has_underscore'] = 1 if '_' in domain else 0
+    return features
+
+def extract_features_dga(domain: str) -> dict:
     domain = str(domain).lower()
-    tld = domain.split('.')[-1]
-    domain_without_tld = '.'.join(domain.split('.')[:-1])
-    return [len(domain_without_tld), get_entropy(domain_without_tld), get_vowel_consonant_ratio(domain_without_tld), get_digit_ratio(domain_without_tld), get_longest_consecutive_chars(domain_without_tld, 'consonant')]
+    features = {
+        'length': len(domain),
+        'entropy': _get_entropy(domain),
+        'vowel_consonant_ratio': _get_vowel_consonant_ratio(domain),
+        'digit_ratio': _get_digit_ratio(domain),
+        'longest_consecutive_digits': _get_longest_consecutive_chars(domain, 'digit'),
+        'longest_consecutive_consonants': _get_longest_consecutive_chars(domain, 'alpha')
+    }
+    features.update(_get_ngram_features(domain, n=2))
+    features.update(_get_ngram_features(domain, n=3))
+    features.update(_get_character_frequency_features(domain))
+    features.update(_get_domain_structure_features(domain))
+    return features
 
 # ---------- 工具函数定义 ----------
 
 # 使用预训练的机器学习模型判断域名是否由DGA算法生成
 def check_dga_with_ml(domain):
-    global dga_model, scaler # 确保能访问全局模型
-    if not dga_model or not scaler:
-        return "DGA detected model unloaded"
+    global dga_model, scaler, feature_names # RF+Scaler+特征名
     try:
-        if '://' in domain: domain = domain.split('//')[1].split('/')[0]
-        features = np.array(extract_features_for_prediction(domain)).reshape(1, -1)
-        features_scaled = scaler.transform(features)
-        prediction = dga_model.predict(features_scaled)
-        # print(f"\nAgent成功获取DGA预测结果")
-        return "根据字符串特征判定域名疑似DGA生成" if prediction[0] == 1 else "域名字符串特征较正常，无法确定为DGA生成"
+        if 'dga_model' not in globals() or 'scaler' not in globals() or 'feature_names' not in globals():
+            dga_model, scaler, feature_names = load_dga_models()
+        if dga_model is None or scaler is None or feature_names is None:
+            return "错误：DGA模型未加载"
+
+        domain_clean = str(domain).strip().lower()
+        feature_dict = extract_features_dga(domain_clean)
+        df_features = pd.DataFrame([feature_dict]).reindex(columns=feature_names, fill_value=0)
+        features_scaled = scaler.transform(df_features)
+        proba = dga_model.predict_proba(features_scaled)
+
+        classes = getattr(dga_model, 'classes_', np.array([0, 1]))
+        if len(classes) == 2:
+            dga_prob = float(proba[:, 1][0])
+        elif len(classes) == 1:
+            dga_prob = float(proba[:, 0][0]) if classes[0] == 1 else float(1.0 - proba[:, 0][0])
+        else:
+            return "ERROR：模型类别数量异常"
+
+        if dga_prob >= 0.75:
+            return f"result: dga"
+        if dga_prob <= 0.25:
+            return f"result: legit"
+
+        llm_cls = _llm_check(domain_clean)
+        if llm_cls == 'dga':
+            return f"result: dga"
+        if llm_cls == 'normal':
+            return f"result: legit"
+        return f"result: unknown"
     except Exception as e:
-        return f"DGA检测时发生错误: {e}"
+        return f"ERROR: {e}"
 
 # 使用python-whois库获取域名的whois注册信息，返回全部whois信息
 def get_whois_info(domain):
@@ -196,34 +305,34 @@ def get_passive_dns_ips(domain):
         return f"Error fetching OTX Analyse: {e}"
 
 # 使用dns库查询 MX, TXT (用于SPF和DMARC) 和 _domainkey 子域名下的TXT记录 
-def get_dns_auth_records(domain):
-    records = {"MX": [], "SPF": "未找到", "DMARC": "未找到", "DKIM_Selectors": []}
-    resolver = dns.resolver.Resolver()
-    try:
-        # 查询MX
-        mx_records = resolver.resolve(domain, 'MX')
-        records['MX'] = [str(r.exchange) for r in mx_records] # type: ignore
-    except dns.resolver.NoAnswer:
-        records['MX'] = "无MX记录"
-    except Exception: pass
+# def get_dns_auth_records(domain):
+#     records = {"MX": [], "SPF": "未找到", "DMARC": "未找到", "DKIM_Selectors": []}
+#     resolver = dns.resolver.Resolver()
+#     try:
+#         # 查询MX
+#         mx_records = resolver.resolve(domain, 'MX')
+#         records['MX'] = [str(r.exchange) for r in mx_records] # type: ignore
+#     except dns.resolver.NoAnswer:
+#         records['MX'] = "无MX记录"
+#     except Exception: pass
 
-    try:
-        # 查询SPF和DMARC (都在TXT记录里)
-        txt_records = resolver.resolve(domain, 'TXT')
-        for r in txt_records:
-            txt_data = r.to_text()
-            if 'v=spf1' in txt_data:
-                records['SPF'] = txt_data
-            elif 'v=DMARC1' in txt_data: # DMARC记录在 _dmarc.example.com
-                 dmarc_records = resolver.resolve(f'_dmarc.{domain}', 'TXT')
-                 for dr in dmarc_records:
-                     if 'v=DMARC1' in dr.to_text():
-                         records['DMARC'] = dr.to_text()
-                         break
-    except dns.resolver.NoAnswer:
-        pass # 没有TXT记录
-    except Exception: pass
-    return records
+#     try:
+#         # 查询SPF和DMARC (都在TXT记录里)
+#         txt_records = resolver.resolve(domain, 'TXT')
+#         for r in txt_records:
+#             txt_data = r.to_text()
+#             if 'v=spf1' in txt_data:
+#                 records['SPF'] = txt_data
+#             elif 'v=DMARC1' in txt_data: # DMARC记录在 _dmarc.example.com
+#                  dmarc_records = resolver.resolve(f'_dmarc.{domain}', 'TXT')
+#                  for dr in dmarc_records:
+#                      if 'v=DMARC1' in dr.to_text():
+#                          records['DMARC'] = dr.to_text()
+#                          break
+#     except dns.resolver.NoAnswer:
+#         pass # 没有TXT记录
+#     except Exception: pass
+#     return records
 
 # 使用socket库建立433端口连接，获取并解析一个域名的SSL/TLS证书信息，返回整理后的证书内容
 def get_ssl_certificate_info(domain):
@@ -421,15 +530,68 @@ def append_to_cache_csv(domain, status, label, detail):
 # --------- 初始化函数定义 ---------
 
 # 加载DGA检测训练模型
-def load_dga_models():
+def load_dga_models(model_path: Optional[str] = None):
     try:
-        model = joblib.load('ml_model/dga_classifier.pkl')
-        scaler_model = joblib.load('ml_model/scaler.pkl')
-        print("   - DGA检测模型和标准化器加载成功")
-        return model, scaler_model
+        # 默认从 dga_test/trained_models 加载
+        if model_path is None:
+            base_dir = os.path.dirname(__file__)
+            model_path = os.path.normpath(os.path.join(base_dir, '..', 'dga_test', 'trained_models'))
+        rf_model = joblib.load(os.path.join(model_path, 'rf_model.pkl'))
+        scaler = joblib.load(os.path.join(model_path, 'scaler.pkl'))
+        feature_names = joblib.load(os.path.join(model_path, 'feature_names.pkl'))
+        print("模型加载成功！")
+        return rf_model, scaler, feature_names
     except FileNotFoundError:
-        print("   - [警告] DGA模型文件未找到。请先运行 'train_dga_model.py'进行训练。DGA检测工具将不可用。")
-        return None, None
+        print("错误：找不到训练好的模型文件。请先运行 dga_trainer.py 训练模型。")
+        return None, None, None
+    except Exception as e:
+        print(f"加载模型时发生错误：{e}")
+        return None, None, None
+
+# --- LLM 复核 ---
+def _extract_classification(llm_response: str) -> str:
+    if not llm_response:
+        return "unknown"
+    response_str = str(llm_response).lower().strip()
+    if "this domain is dga" in response_str:
+        return "dga"
+    if "this domain is normal" in response_str:
+        return "normal"
+    return "unknown"
+
+def _llm_check(domain: str) -> str:
+    try:
+        model = OllamaLLM(model="qwen3:4b", temperature=0.1, base_url="http://192.168.3.98:11434")
+        prompt = f"""
+        If the domain name is meaningless, it is likely to be a DGA domain.
+        You are a domain name classification system. Your task is
+        to classify domain names as either 'dga' (Domain Generation
+        Algorithm) or 'normal'. DGA domains are automatically
+        generated by malware, while normal domains are not.
+        Here are the tips for you to classify the domain name:
+        If the domain name is totally meaningless, it is likely to be a DGA domain.
+        If the domain name is a combination of random characters or random meaningless words, it is likely to be a DGA domain.
+        If the domain name reflects the purpose of the website, it is likely to be a normal domain.
+        If the domain name contains company name, it is likely to be a normal domain.
+
+        Now you classify this domain: {domain}, and answer in strict format:
+        "Conclusion: This domain is normal/dga."
+        """
+        llm_result = model.invoke(prompt)
+        return _extract_classification(llm_result)
+    except Exception as e:
+        print(f"LLM调用失败: {e}")
+        return "unknown"
+
+# def load_dga_models():
+#     try:
+#         model = joblib.load('ml_model/dga_classifier.pkl')
+#         scaler_model = joblib.load('ml_model/scaler.pkl')
+#         print("   - DGA检测模型和标准化器加载成功")
+#         return model, scaler_model
+#     except FileNotFoundError:
+#         print("   - [警告] DGA模型文件未找到。请先运行 'train_dga_model.py'进行训练。DGA检测工具将不可用。")
+#         return None, None
 
 # 从CSV文件中读取待分析的域名
 # def read_domains_to_analyze(file_path):
@@ -506,7 +668,7 @@ def parse_info_node(state: DomainAnalysisState) -> dict:
         whois_info = get_whois_info(domain)
         dns_ips = json.dumps(get_dns_ips(domain), indent=2)
         passive_dns = json.dumps(get_passive_dns_ips(domain), indent=2)
-        dns_auth = json.dumps(get_dns_auth_records(domain), indent=2)
+        # dns_auth = json.dumps(get_dns_auth_records(domain), indent=2)
         ssl_info = get_ssl_certificate_info(domain)
         
         # LLM分析
@@ -516,7 +678,6 @@ def parse_info_node(state: DomainAnalysisState) -> dict:
                 - Whois信息: {whois_info}
                 - DNS解析: {dns_ips}
                 - 历史DNS: {passive_dns}
-                - 邮件安全: {dns_auth}
                 - SSL证书信息: {ssl_info}
                 请用中文简要总结分析结论。
                 """
@@ -534,12 +695,12 @@ def parse_info_node(state: DomainAnalysisState) -> dict:
             print(f"LLM调用失败: {e}")
             llm_result = "LLM分析失败，无法获取分析结果"
         
+        print(f"解析信息节点执行成功: {llm_result}")
         return {
             "whois_info": whois_info,
             "dns_ips": dns_ips,
-            "passive_dns": passive_dns,
-            "dns_auth": dns_auth,
             "ssl_info": ssl_info,
+            "passive_dns": passive_dns,
             "parse_info_analysis": llm_result
         }
     except Exception as e:
@@ -548,7 +709,6 @@ def parse_info_node(state: DomainAnalysisState) -> dict:
             "whois_info": "获取失败",
             "dns_ips": "获取失败",
             "passive_dns": "获取失败",
-            "dns_auth": "获取失败",
             "ssl_info": "获取失败",
             "parse_info_analysis": f"分析失败: {e}"
         }
@@ -583,6 +743,7 @@ def website_analysis_node(state: DomainAnalysisState) -> dict:
             print(f"LLM调用失败: {e}")
             llm_result = "LLM分析失败，无法获取分析结果"
         
+        print(f"网站分析节点执行成功: {llm_result}")
         return {
             "website_content": website_content,
             "website_analysis": llm_result
@@ -606,16 +767,14 @@ def final_analysis_node(state: DomainAnalysisState) -> dict:
 
     # 3. 在Prompt中加入格式化指令
     prompt_context = f"""
-你是一名顶尖的网络安全分析师。你已经收集到了关于域名 '{domain}' 各方面的信息。
-请基于下面提供的全部上下文，进行深入分析，判断该域名是否为恶意域名。
+你是一名顶尖的网络安全分析师。你已经收集到了关于域名 '{domain}' 各方面的信息和总结报告：
 
-**已收集情报:**
 - DGA检测: {state.get('dga_result', '未收集')}
 - 解析信息分析: {state.get('parse_info_analysis', '未收集')}
 - 网站内容分析: {state.get('website_analysis', '未收集')}
 
 **任务:**
-综合上述所有信息，推断潜在的恶意行为。
+综合上述所有信息，推断潜在的恶意行为，判断域名是恶意域名还是良性域名。
 
 **重要：请严格按照以下JSON格式输出你的最终报告，不要包含任何其他多余的文字或解释。**
 {parser.get_format_instructions()}
@@ -700,8 +859,8 @@ def process_uncached_domain(domain):
     start_time = time.perf_counter()
 
     # 在全局加载一次dga检测机器学习模型
-    global dga_model, scaler
-    dga_model, scaler = load_dga_models()
+    global dga_model, scaler, feature_names
+    dga_model, scaler, feature_names = load_dga_models()
 
     # --- LangGraph Definition ---
     graph = StateGraph(DomainAnalysisState)

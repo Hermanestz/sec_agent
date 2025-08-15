@@ -464,7 +464,6 @@ def initialize_llm():
 
     # 使用通义千问qwen3:8b（本地部署）大模型
     model = OllamaLLM(model="qwen3:14b", temperature=0.1, base_url="http://192.168.3.98:11434")
-    # model = OllamaLLM(model="qwen2.5:14b", temperature=0.1, base_url="http://host.docker.internal:11434")
     print("   - 初始化本地LLM (qwen3:14b)...")
     return model
 

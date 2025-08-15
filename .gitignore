@@ -113,3 +113,8 @@ data/
 prompt/
 ml_model/
 knowledge_base/
+document/
+evaluate_domain/
+experiment_data/
+dga_test/
+*.pdf

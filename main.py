@@ -10,8 +10,8 @@ from jose import JWTError, jwt # type: ignore
 from passlib.context import CryptContext # type: ignore
 from pydantic import BaseModel # type: ignore
 
-from project.agent_domain import start_with_domain
-from project.agent_ip import start_with_ip
+from src.agent_domain import start_with_domain
+from src.agent_ip import start_with_ip
 
 # --- 1. 应用实例与配置 ---
 

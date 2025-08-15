@@ -155,7 +155,7 @@ def dga_detection_system(dns_file_path="dga_test/dns.csv"):
 
     # 识别疑似DGA域名
     # 通常会设置一个概率阈值，例如 0.5
-    suspicious_domains = df_domains_result[df_domains_result['dga_probability'] >= 0.8]
+    suspicious_domains = df_domains_result[df_domains_result['dga_probability'] >= 0.3]
     print(f"随机森林分类结果：共识别出 {len(suspicious_domains)} 个疑似DGA域名。")
     print("疑似DGA域名:")
     print(suspicious_domains.sort_values(by='dga_probability', ascending=False).head(10))

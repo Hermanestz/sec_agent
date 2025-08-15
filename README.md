@@ -2,10 +2,36 @@
 
 ## 1. 项目简介
 
-本项目是一个基于大型语言模型（LLM）和多工具集成的智能 Agent ，旨在自动化地对域名和ip进行全面准确快速的安全分析和风险评估,支持批量分析、缓存复用、知识库扩展，适合安全研究与自动化检测场景。本项目包含两个核心脚本：agent_domain.py 和 agent_ip.py。它们是基于大型语言模型（LLM）和 LangGraph 框架构建的自动化网络威胁情报分析工具。
+本项目是一个基于大型语言模型（LLM）和多工具集成的智能 Agent ，旨在自动化地对域名和ip进行全面准确快速的安全分析和风险评估,支持批量分析和缓存复用，适合安全研究与自动化检测场景。本项目的的核心代码文件包括：agent_domain.py 和 agent_ip.py。它们是基于大型语言模型（LLM）和 LangGraph 框架构建的自动化网络威胁情报分析工具。
 
-agent_domain.py: 专注于对域名进行全方位安全分析，评估其是否为恶意域名（如钓鱼网站、C2服务器、DGA域名等）。
-agent_ip.py: 专注于对IP地址进行综合安全研判，评估其是否与恶意活动相关。
+项目文件结构：
+
+    /Agent_URL/
+    |  
+    |-- main.py                   # Agent主程序脚本  
+    |-- train_dga_model.py        # DGA模型训练脚本  
+    |
+    |-- /data/  
+    |   |-- domains.csv           # 待分析的域名列表
+    |   |-- cache.csv             # 缓存已分析的域名列表
+    |   |-- legit_domains.txt     # 用于训练的合法域名列表
+    |   |-- dga_domains.txt       # 用于训练的DGA域名列表
+    |  
+    |-- /ml_model/                # (自动生成) 存放机器学习模型文件  
+    |   |-- dga_classifier.pkl
+    |   |-- scaler.pkl  
+    |      
+    |-- /src/                     # 主程序代码
+    |   |-- agent_domain.py       # 对域名进行综合安全分析
+    |   |-- agent_ip.py           # 对ip地址进行综合安全分析
+    |
+    |  
+    |-- prompt.txt                # 存放Agent的prompt提示词文本  
+    |-- log_domain.txt            # 记录域名分析结果
+    |-- log_ip.txt                # 记录ip地址分析结果      
+    |-- render.yaml               # 
+    |-- requirements.txt          #
+    |-- README.md                 # 本说明文档  
 
 ## 2. 技术框架
 
@@ -74,20 +100,15 @@ Agent在分析IP地址时，会调用以下工具函数来获取所需的信息�
 - **`get_ssl_certificate_info(ip_address)`**：直接连接IP获取SSL证书信息，建立SSL连接获取证书详情，判断IP的SSL配置安全性。
 - **`get_website_content(ip_address)`**：从IP地址获取网页内容，尝试HTTP和HTTPS连接提取网页文本，分析IP上托管的网站内容。
 
-## 4. 域名数据
+## 4. 本地运行指南
 
-域名测试数据来源：  
-`https://github.com/faizann24/Using-machine-learning-to-detect-malicious-URLs/blob/master/data/data.csv`  
-
-## 5. 使用指南
-
-### 5.1 环境准备与安装
+### 4.1 环境准备与安装
 
 Python版本：Python 3.9+
 安装所需Python库：  
 `pip install --no-cache-dir -r requirements.txt`
 
-### 5.2 API密钥配置
+### 4.2 API密钥配置
 
 本项目需要以下API密钥，请在首次运行时根据提示输入，或预先设置为环境变量：
 
@@ -113,28 +134,6 @@ Python版本：Python 3.9+
     `$env:DASHSCOPE_API_KEY="your_tongyi_api_key_here"`  
     `$env:ZHIPUAI_API_KEY="your_zhipu_api_key_here"`  
 
-### 5.3 DGA模型训练
-
-为了使用的DGA检测功能，在运行agent前需要先训练模型：
-
-1. 创建 `legit_domains.txt` 和 `dga_domains.txt` 文件，并填入相应的训练样本（每行一个域名）。
-2. 运行训练脚本： `python train_dga_model.py`
-3. 成功后，会在项目下生成一个 `ml_model` 文件夹，内含 `dga_classifier.pkl` 和 `scaler.pkl` 两个模型文件。
-
-### 5.4 运行分析
-
-1. 创建并编辑 `domains.csv` 文件，。请确保第一行是表头 `domain`，后续每行一个待分析的域名。  
-
-    **`domains.csv` 示例:**
-
-        |    domain    |
-        |  google.com  |
-        |  github.com  |
-
-2. 运行主程序：  
-    `python main.py`  
-3. 程序将开始执行分析。分析过的域名及其结果会自动记录在 `domain_analysis_cache.csv` 文件中，下次运行时将自动跳过。
-
 ## 6. 模型设置
 
 LLM选型：
@@ -148,27 +147,6 @@ LLM选型：
 
 参数设置：  
 Temperature（温度参数）是控制AI生成文本随机性的关键参数，取值范围通常为0到1（部分模型支持更高），在本项目中建议设置为0.1，保证文字输出的稳定性。
-
-## 7. 项目文件结构
-
-    /Agent_URL/
-    |  
-    |-- main.py                   # Agent主程序脚本  
-    |-- train_dga_model.py        # DGA模型训练脚本  
-    |
-    |-- /data/  
-    |   |-- domains.csv           # 待分析的域名列表
-    |   |-- cache.csv             # 缓存已分析的域名列表
-    |   |-- legit_domains.txt     # 用于训练的合法域名列表
-    |   |-- dga_domains.txt       # 用于训练的DGA域名列表
-    |  
-    |-- /ml_model/                # (自动生成) 存放机器学习模型文件  
-    |   |-- dga_classifier.pkl  
-    |   |-- scaler.pkl  
-    |  
-    |-- prompt.txt                # 存放Agent的prompt提示词文本  
-    |-- output.txt                # 记录Agent回答的输出文件  
-    |-- README.md                 # 本说明文档  
 
 ## 8. 优化方向
 
@@ -200,4 +178,3 @@ Temperature（温度参数）是控制AI生成文本随机性的关键参数，�
 - 调用api安全认证（已解决）
 - 标签不够准确
 - 解决网络代理问题导致输出异常问题
-- 增加AbuseIPDB威胁平台

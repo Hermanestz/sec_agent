@@ -21,8 +21,8 @@ def extract_domain(url):
         return domain.lower()
     return None
 
-input_file = r'D:\TeleResearch_GZ\SEC_AGENT\evaluation_domain\url_dataset.csv'
-output_file = r'D:\TeleResearch_GZ\SEC_AGENT\evaluation_domain\sdomain.csv'
+input_file = r'D:\TeleResearch_GZ\SEC_AGENT\experiment_data\PhishTank.csv'
+output_file = r'D:\TeleResearch_GZ\SEC_AGENT\experiment_data\phish_domains.csv'
 
 # 用集合去重，key为 (domain, label)
 domain_info_set = set()
@@ -43,4 +43,4 @@ with open(output_file, 'w', encoding='utf-8', newline='') as outfile:
     for domain, label in sorted(domain_info_set):
         writer.writerow([domain, label])
 
-print("域名和信息筛选与提取完成，已保存到 sdomain.csv")
+print("域名和信息筛选与提取完成，已保存到 domain.csv")
